@@ -1,0 +1,47 @@
+body {
+  max-width: 412px;
+  box-sizing: border-box;
+}
+
+@media (width>412px) {
+  body {
+    max-width: 912px;
+  }
+
+}
+
+@media (width>912px) {
+  body {
+    max-width: max-content;
+  }
+}
+
+#logo-principal {
+  text-align: center;
+
+}
+
+h2 {
+  text-align: center;
+  box-sizing: border-box;
+  background-color: rgb(230, 33, 237);
+  border-radius: 16px;
+  max-width: relative;
+}
+
+header {
+  background-color: aqua;
+  position: sticky;
+  padding: 0;
+  margin: 0;
+  top: 0;
+
+}
+
+
+#menu-desplegable {
+  color: rgb(0, 0, 0);
+  background-color: rgb(230, 33, 237);
+  border-radius: 16px;
+  max-width: 250px;
+}

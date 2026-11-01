@@ -1,9 +1,17 @@
+:root{
+ font-family: "Crimson Text", serif;
+ font-family: "Original Surfer", sans-serif;
+--color-primary: #F5EDE3;
+--color-secunday: #F6A0B3;
+--color-terciary:#3F2F22;
+--font-primary: "Original Surfer", sans-serif;
+--font-secundary: "Crimson Text", serif;
+}
 body {
   max-width: 412px;
   box-sizing: border-box;
   margin: 0;
 }
-
 
 #name {
   text-align: center;
@@ -19,6 +27,7 @@ h2 {
   background-color: rgb(230, 33, 237);
   border-radius: 16px;
   max-width: relative;
+  font: var(--font-primary);
 }
 
 header {
@@ -30,13 +39,15 @@ header {
 
 
 #menu-navegante {
-  color: rgb(0, 0, 0);
-  background-color: rgb(230, 33, 237);
-  border-radius: 16px;
-  max-width: 250px;
-  display: flex;
-  flex-direction: column
-z
+   color: rgb(0, 0, 0);
+    background-color: rgb(230, 33, 237);
+    border-radius: 16px;
+    max-width: 100%;
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    justify-content: space-around;
+
 
 }
 
@@ -46,7 +57,9 @@ z
   align-items: center;
 
 }
-
+.introduccion{
+  display: flex;
+}
 @media (width>412px) {
   body {
     max-width: 912px;

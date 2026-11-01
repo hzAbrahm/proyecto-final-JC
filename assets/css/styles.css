@@ -1,126 +1,62 @@
-:root{
- font-family: "Crimson Text", serif;
- font-family: "Original Surfer", sans-serif;
---color-primary: #F5EDE3;
---color-secunday: #F6A0B3;
---color-terciary:#3F2F22;
---font-primary: "Original Surfer", sans-serif;
---font-secundary: "Crimson Text", serif;
+:root {
+  --color-1: #0D0D0D;
+  --color-2: #2E8DB6;
+  --color-3: #F2780C;
+  --color-4: #F2E8DC;
+  --color-5: #F2AE30;
+  --fuente-principal: 'Lilita One', sans-serif;
+  --fuente-secundaria: 'Lobster', sans-serif;
+  --fuente-terciaria: 'Playwrite IT Trad', sans-serif;
+  --fuente-cuaternaria: 'Xmind', sans-serif;
 }
-body {
-  max-width: 412px;
-  box-sizing: border-box;
+
+body{
   margin: 0;
-}
-
-#name {
-  text-align: center;
-  margin: 0;
-  padding: 10px;
-
-
-}
-
-h2 {
-  text-align: center;
-  box-sizing: border-box;
-  background-color: rgb(230, 33, 237);
-  border-radius: 16px;
-  max-width: relative;
-  font: var(--font-primary);
 }
 
 header {
-  background-color: aqua;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--color-1);
+  color: var(--color-4);
+  padding: 1rem  ;
+  text-align: center;
   position: sticky;
   top: 0;
-  margin: 0;
 }
-
-
-#menu-navegante {
-   color: rgb(0, 0, 0);
-    background-color: rgb(230, 33, 237);
-    border-radius: 16px;
-    max-width: 100%;
-    display: flex;
-    align-items: center;
-    flex-direction: row;
-    justify-content: space-around;
-
-
-}
-
 #encabezado-superior {
   display: flex;
   justify-content: space-between;
   align-items: center;
-
 }
-.introduccion{
+#encabezado-superior h1 {
+  font-family: var(--fuente-principal);
+  font-size: 2rem;
+  margin: 0;
+}
+
+#encabezado-inferior {
   display: flex;
-}
-@media (width>412px) {
-  body {
-    max-width: 912px;
-  }
-  header {
-    background-color: aqua;
-    position: sticky;
-    top: 0;
-    margin: 0;
-  }
-
-
-  #menu-navegante {
-    color: rgb(0, 0, 0);
-    background-color: rgb(230, 33, 237);
-    border-radius: 16px;
-    max-width: 100%;
-    display: flex;
-    align-items: center;
-    flex-direction: row;
-    justify-content: space-around;
-  }
-
-  #encabezado-superior {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-
-  }
-
+  justify-content: space-between;
+  align-items: center;
+ 
 }
 
-@media (width>912px) {
-  body {
-    max-width: 100%;
-  }
+#carrito{
+  border-radius: 13px;
+}
 
-  header {
-    background-color: aqua;
-    position: sticky;
-    top: 0;
-    margin: 0;
-  }
+#carrito:hover{
+  border-style: solid;
+  border-color: var(--color-5);
+}
 
+.imgboton {
+ text-decoration: none;
+ color: var(--color-4);
+}
 
-  #menu-navegante {
-    color: rgb(0, 0, 0);
-    background-color: rgb(230, 33, 237);
-    border-radius: 16px;
-    max-width: 100%;
-    display: flex;
-    align-items: center;
-    flex-direction: row;
-    justify-content: space-around;
-  }
-
-  #encabezado-superior {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-
-  }
-
+#menu-navegante {
+  display: none;
 }

@@ -12,20 +12,30 @@
 </head>
 
 <body>
-  <header>
+<header>
     <div id="encabezado-superior">
-      <h1 id="name">Calles Dulces</h1>
-      <a id="carrito" href="carrito.html" img="">mi carrito</a>
+      <h1 id="name"><a href="../../index.html">Calles Dulces</a></h1>
     </div>
-    <div id="hamburguer">
-      <a class="menu-toggle" href="#menu-navegante">☰</a>
+    <div id="encabezado-inferior">
+      <a id="carrito" href="carrito.html"><img src="../img/interactivos/carrito.png"
+          alt="mi carrito" width="39" height="35"></a>
+      <div id="hamburguer">
+        <button id="abrir" class="navbutton" type="button">
+          <img src="../img/interactivos/hamburguer.png" alt="Menú" width="39" height="35">
+        </button>
+
+        <nav aria-label="Menú principal" class="nav" id="nav">
+          <button id="cerrar" class="navbutton" type="button">
+            <img src="../img/interactivos/cerrar.png" alt="Cerrar menu" width="39" height="35">
+          </button>
+          <a href="../../index.html">inicio</a>
+          <a href="tienda.html">tienda</a>
+          <a href="donaciones.html">¿quieres donar?</a>
+          <a href="#contactanos">contactanos</a>
+
+        </nav>
+      </div>
     </div>
-    <nav id="menu-navegante">
-      <a href="../../index.html">inicio</a>
-      <a href="tienda.html">tienda</a>
-      <a href="donaciones.html">¿quieres donar?</a>
-      <a href="#contactanos">contactanos</a>
-    </nav>
   </header>
 
   <main id="tienda">
@@ -79,6 +89,7 @@
     <h2>Contactanos</h2>
     <p>Siguenos en nuestras redes sociales: -redes sociales-</p>
   </footer>
+  <script src="../js/options.js"></script>
 </body>
 
 </html>

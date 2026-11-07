@@ -1,0 +1,160 @@
+:root {
+  --color-1: #0D0D0D;
+  --color-2: #2E8DB6;
+  --color-3: #F2780C;
+  --color-4: #F2E8DC;
+  --color-5: #F2AE30;
+  --color-6: #fefefe;
+  --fuente-1: 'Lilita One', sans-serif;
+  --fuente-2: 'Lobster', sans-serif;
+  --fuente-3: 'Playwrite IT Trad', sans-serif;
+  --fuente-4: 'Xmind', sans-serif;
+}
+
+/* extras */
+
+body{
+  margin: 0;
+  background-color: var(--color-4);
+}
+
+a {
+  text-decoration: none;
+  color: var(--color-4);
+  font: var(--fuente-4);
+}
+
+h2, h3, p {
+  margin: 1rem;
+  padding: 0.5rem;
+}
+
+/* estilos del header */
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--color-1);
+  color: var(--color-4);
+  padding: 1rem  ;
+  text-align: center;
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+#encabezado-superior {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+#encabezado-superior h1 {
+  font-family: var(--fuente-1);
+  font-size: 2rem;
+  margin: 0;
+}
+
+#encabezado-inferior {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+ 
+}
+
+
+.nav{
+  opacity: 0;
+  visibility: hidden;
+  transform: translateX(100%);
+  display: flex;
+  flex-direction: column;
+  align-items: end;
+  gap: 1rem;
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  padding: 1.5rem;
+  background-color: var(--color-1);
+  box-sizing: border-box;
+  z-index: 1000;
+  transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out, visibility 0.3s ease-in-out;
+}
+
+.nav.visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(0);
+}
+
+.navbutton {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.menu-navegante {
+  display: flex;
+  flex-direction: column;
+  align-items: end;
+  gap: 1rem;
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+
+
+/* estilos de main */
+
+main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#introduccion {
+  font-family: var(--fuente-2);
+  text-align: center;
+  font-size: 1.3rem;
+}
+
+#introduccion img {
+  max-width: 100%;
+  height: auto;
+  width: 100%;
+}
+
+.boton {
+  background-color: var(--color-3);
+  color: var(--color-4);
+  border-radius: 16px;
+  border: none;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-top: 1rem;
+}
+
+.boton:hover {
+  background-color: var(--color-5);
+}
+
+#nosotros {
+  font-family: var(--fuente-4);
+  font-size: 1.2rem;
+  margin-top: 2rem;
+  background-color: var(--color-6);
+
+}
+
+#nosotros h2{
+  font-family: var(--fuente-2);
+  text-align: left;
+  font-size: 1.8rem;
+  color: var(--color-4);
+  background-color: #0D0D0D;
+  padding: 3rem;
+  margin: 0;
+}

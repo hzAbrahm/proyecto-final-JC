@@ -87,7 +87,18 @@ header {
   transform: translateX(0);
 }
 
-.navbutton {
+.boton-carrito, .boton-abrir{
+  color: var(--color-4);
+  font-size: 1.5rem;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.boton-cerrar {
+  color: var(--color-4);
+  font-size: 1rem;
   background-color: transparent;
   border: none;
   cursor: pointer;

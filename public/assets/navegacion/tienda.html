@@ -7,26 +7,30 @@
   <title>Calles Dulces | Tienda</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Lobster&family=Playwrite+IT+Trad:wght@100..400&family=Xmind:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Lobster&family=Playwrite+IT+Trad:wght@100..400&family=Xmind:ital,wght@0,100..900;1,100..900&display=swap"
+    rel="stylesheet">
   <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/bootstrap-icons.css">
 </head>
 
 <body>
-<header>
+  <header>
     <div id="encabezado-superior">
       <h1 id="name"><a href="../../index.html">Calles Dulces</a></h1>
     </div>
     <div id="encabezado-inferior">
-      <a id="carrito" href="carrito.html"><img src="../img/interactivos/carrito.png"
-          alt="mi carrito" width="39" height="35"></a>
+      <button class="boton-carrito">
+        <a href="carrito.html" aria-label="Mi carrito"><i class="bi bi-cart3" aria-hidden="true"></i></a>
+      </button>
       <div id="hamburguer">
-        <button id="abrir" class="navbutton" type="button">
-          <img src="../img/interactivos/hamburguer.png" alt="Menú" width="39" height="35">
+        <button id="abrir" class="boton-abrir" type="button">
+          <i class="bi bi-list" aria-hidden="true"></i>
         </button>
 
         <nav aria-label="Menú principal" class="nav" id="nav">
-          <button id="cerrar" class="navbutton" type="button">
-            <img src="../img/interactivos/cerrar.png" alt="Cerrar menu" width="39" height="35">
+          <button id="cerrar" class="boton-cerrar" type="button">
+            <i class="bi bi-x-lg" aria-hidden="true"></i>
           </button>
           <a href="../../index.html">inicio</a>
           <a href="tienda.html">tienda</a>

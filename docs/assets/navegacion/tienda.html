@@ -43,11 +43,27 @@
   </header>
 
   <main id="tienda">
+    <section class="tienda-encabezado">
+      <span class="tienda-adorno tienda-adorno-izq" aria-hidden="true">✦</span>
+      <div>
+        <span class="tienda-etiqueta">elige tu proximo antojo</span>
+        <h1>la tienda dulce</h1>
+        <p>Postres preparados para endulzar tu dia y apoyar una buena causa.</p>
+      </div>
+      <span class="tienda-adorno tienda-adorno-der" aria-hidden="true">●</span>
+    </section>
+
     <section id="favoritos">
-      <h2>Tienda principal</h2>
-      <h3>favoritos de la semana</h3>
+      <div class="tienda-seccion-titulo">
+        <span class="seccion-icono" aria-hidden="true"><i class="bi bi-star-fill"></i></span>
+        <div>
+          <h2>favoritos de la semana</h2>
+          <p>Los antojos que mas estan disfrutando nuestros clientes.</p>
+        </div>
+      </div>
       <ul class="allproducts">
-        <li class="producto">
+        <li class="producto producto-destacado">
+          <span class="producto-etiqueta">favorito</span>
           <h4>tiramisu</h4>
           <div class="imagenproducto">
             <img src="../img/productos/tiramisu.jpg" alt="Tiramisú" width="150">
@@ -59,22 +75,74 @@
     </section>
 
     <section id="catalogo">
-      <h2>productos</h2>
+      <div class="tienda-seccion-titulo">
+        <span class="seccion-icono" aria-hidden="true"><i class="bi bi-grid-3x3-gap-fill"></i></span>
+        <div>
+          <h2>productos</h2>
+          <p>Explora el catalogo y encuentra tu proximo favorito.</p>
+        </div>
+      </div>
 
-      <form id="form-busqueda" role="search">
-        <label for="buscar-postre">¿ya tienes algo en mente? ¡buscalo!</label>
-        <input type="search" id="buscar-postre" name="producto" placeholder="buscar postre..." required>
-        <button type="submit">buscar</button>
+      <div class="catalogo-herramientas">
+        <form id="form-busqueda" role="search">
+          <label for="buscar-postre">¿ya tienes algo en mente? ¡buscalo!</label>
+          <div class="campo-accion">
+            <input type="search" id="buscar-postre" name="producto" placeholder="buscar postre..." required>
+            <button type="submit">buscar <i class="bi bi-search" aria-hidden="true"></i></button>
+          </div>
+        </form>
+
+        <form id="form-recomendacion">
+          <label for="recomendar-postre">¿algun postre que no este en nuestro catalogo? ¡dinoslo!</label>
+          <div class="campo-accion">
+            <input type="text" id="recomendar-postre" name="recomendacion" placeholder="recomendacion..." required>
+            <button type="submit">enviar <i class="bi bi-send" aria-hidden="true"></i></button>
+          </div>
+        </form>
+      </div>
+
+      <form id="filtros-productos" class="filtros-productos">
+        <div class="filtros-titulo">
+          <i class="bi bi-sliders" aria-hidden="true"></i>
+          <span>filtra tu antojo</span>
+        </div>
+        <label>
+          categoria
+          <select name="categoria" id="filtro-categoria">
+            <option value="">todas</option>
+            <option value="brownies">brownies</option>
+            <option value="tortas">tortas</option>
+            <option value="galletas">galletas</option>
+            <option value="postres-frios">postres frios</option>
+            <option value="dulces">dulces</option>
+          </select>
+        </label>
+        <label>
+          sabor o ingrediente
+          <select name="ingrediente" id="filtro-ingrediente">
+            <option value="">todos</option>
+            <option value="chocolate">chocolate</option>
+            <option value="frutas">frutas</option>
+            <option value="vainilla">vainilla</option>
+            <option value="caramelo">caramelo</option>
+            <option value="fresa">fresa</option>
+          </select>
+        </label>
+        <label>
+          opcion especial
+          <select name="restriccion" id="filtro-restriccion">
+            <option value="">todas</option>
+            <option value="sin-leche">sin leche</option>
+            <option value="sin-gluten">sin gluten</option>
+            <option value="vegano">vegano</option>
+          </select>
+        </label>
+        <button type="reset" class="limpiar-filtros">limpiar filtros</button>
       </form>
 
-      <form id="form-recomendacion">
-        <label for="recomendar-postre">¿algun postre que no este en nuestro catalogo? ¡dinoslo!</label>
-        <input type="text" id="recomendar-postre" name="recomendacion" placeholder="recomendacion..." required>
-        <button type="submit">enviar</button>
-      </form>
-
-      <ul class="allproducts">
-        <li class="producto">
+      <p id="resultado-filtros" class="resultado-filtros" aria-live="polite"></p>
+      <ul class="allproducts" id="lista-productos">
+        <li class="producto" data-categoria="brownies" data-ingrediente="chocolate" data-restriccion="sin-leche">
           <h3>brownie</h3>
           <div class="imagenproducto">
             <img src="../img/productos/brownie sencillo.jpg" alt="Brownie sencillo" width="300">
@@ -85,13 +153,125 @@
             </div>
           </div>
         </li>
+        <li class="producto" data-categoria="tortas" data-ingrediente="vainilla" data-restriccion="">
+          <h3>pastel de vainilla</h3>
+          <div class="imagenproducto"><img src="https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=600&q=80" alt="Pastel de vainilla" loading="lazy"><button type="button" class="añadir-producto">añadir al carrito</button><p class="precio">12.000 cop</p></div>
+        </li>
+        <li class="producto" data-categoria="galletas" data-ingrediente="chocolate" data-restriccion="sin-leche">
+          <h3>galletas con chocolate</h3>
+          <div class="imagenproducto"><img src="https://images.unsplash.com/photo-1499636136210-6f4ee915583e?auto=format&fit=crop&w=600&q=80" alt="Galletas con chocolate" loading="lazy"><button type="button" class="añadir-producto">añadir al carrito</button><p class="precio">5.000 cop</p></div>
+        </li>
+        <li class="producto" data-categoria="postres-frios" data-ingrediente="frutas" data-restriccion="">
+          <h3>parfait de frutas</h3>
+          <div class="imagenproducto"><img src="https://images.unsplash.com/photo-1488477181946-6428a0291777?auto=format&fit=crop&w=600&q=80" alt="Parfait de frutas" loading="lazy"><button type="button" class="añadir-producto">añadir al carrito</button><p class="precio">8.000 cop</p></div>
+        </li>
+        <li class="producto" data-categoria="tortas" data-ingrediente="fresa" data-restriccion="">
+          <h3>torta de fresa</h3>
+          <div class="imagenproducto"><img src="https://images.unsplash.com/photo-1565958011703-44f9829ba187?auto=format&fit=crop&w=600&q=80" alt="Torta de fresa" loading="lazy"><button type="button" class="añadir-producto">añadir al carrito</button><p class="precio">14.000 cop</p></div>
+        </li>
+        <li class="producto" data-categoria="dulces" data-ingrediente="caramelo" data-restriccion="sin-gluten">
+          <h3>caramelos artesanales</h3>
+          <div class="imagenproducto"><img src="https://images.unsplash.com/photo-1582058091505-f87a2e55a40f?auto=format&fit=crop&w=600&q=80" alt="Caramelos artesanales" loading="lazy"><button type="button" class="añadir-producto">añadir al carrito</button><p class="precio">4.000 cop</p></div>
+        </li>
+        <li class="producto" data-categoria="postres-frios" data-ingrediente="vainilla" data-restriccion="sin-gluten">
+          <h3>flan de vainilla</h3>
+          <div class="imagenproducto"><img src="https://images.unsplash.com/photo-1551024506-0bccd828d307?auto=format&fit=crop&w=600&q=80" alt="Flan de vainilla" loading="lazy"><button type="button" class="añadir-producto">añadir al carrito</button><p class="precio">7.000 cop</p></div>
+        </li>
+        <li class="producto" data-categoria="galletas" data-ingrediente="frutas" data-restriccion="vegano">
+          <h3>galletas de avena</h3>
+          <div class="imagenproducto"><img src="https://images.unsplash.com/photo-1590080875515-8a3a8dc5735e?auto=format&fit=crop&w=600&q=80" alt="Galletas de avena" loading="lazy"><button type="button" class="añadir-producto">añadir al carrito</button><p class="precio">5.500 cop</p></div>
+        </li>
+        <li class="producto" data-categoria="brownies" data-ingrediente="caramelo" data-restriccion="">
+          <h3>blondie de caramelo</h3>
+          <div class="imagenproducto"><img src="https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=600&q=80" alt="Blondie de caramelo" loading="lazy"><button type="button" class="añadir-producto">añadir al carrito</button><p class="precio">6.500 cop</p></div>
+        </li>
+        <li class="producto" data-categoria="tortas" data-ingrediente="chocolate" data-restriccion="">
+          <h3>torta de chocolate</h3>
+          <div class="imagenproducto"><img src="https://images.unsplash.com/photo-1571115177098-24ec42ed204d?auto=format&fit=crop&w=600&q=80" alt="Torta de chocolate" loading="lazy"><button type="button" class="añadir-producto">añadir al carrito</button><p class="precio">15.000 cop</p></div>
+        </li>
+        <li class="producto" data-categoria="postres-frios" data-ingrediente="fresa" data-restriccion="">
+          <h3>mouse de fresa</h3>
+          <div class="imagenproducto"><img src="https://images.unsplash.com/photo-1486427944299-d1955d23e34d?auto=format&fit=crop&w=600&q=80" alt="Mousse de fresa" loading="lazy"><button type="button" class="añadir-producto">añadir al carrito</button><p class="precio">9.000 cop</p></div>
+        </li>
+        <li class="producto" data-categoria="dulces" data-ingrediente="frutas" data-restriccion="vegano">
+          <h3>brochetas de fruta</h3>
+          <div class="imagenproducto"><img src="https://images.unsplash.com/photo-1490474418585-ba9bad8fd0ea?auto=format&fit=crop&w=600&q=80" alt="Brochetas de fruta" loading="lazy"><button type="button" class="añadir-producto">añadir al carrito</button><p class="precio">6.000 cop</p></div>
+        </li>
+        <li class="producto" data-categoria="galletas" data-ingrediente="vainilla" data-restriccion="sin-gluten">
+          <h3>macarons de vainilla</h3>
+          <div class="imagenproducto"><img src="https://images.unsplash.com/photo-1558326567-98ae2405596b?auto=format&fit=crop&w=600&q=80" alt="Macarons de vainilla" loading="lazy"><button type="button" class="añadir-producto">añadir al carrito</button><p class="precio">11.000 cop</p></div>
+        </li>
+        <li class="producto" data-categoria="postres-frios" data-ingrediente="caramelo" data-restriccion="sin-gluten">
+          <h3>cheesecake de caramelo</h3>
+          <div class="imagenproducto"><img src="https://images.unsplash.com/photo-1533134242443-d4fd215305ad?auto=format&fit=crop&w=600&q=80" alt="Cheesecake de caramelo" loading="lazy"><button type="button" class="añadir-producto">añadir al carrito</button><p class="precio">13.000 cop</p></div>
+        </li>
+        <li class="producto" data-categoria="brownies" data-ingrediente="frutas" data-restriccion="vegano">
+          <h3>brownie de frutos rojos</h3>
+          <div class="imagenproducto"><img src="https://images.unsplash.com/photo-1607920592519-4c3d5e2b7f5a?auto=format&fit=crop&w=600&q=80" alt="Brownie de frutos rojos" loading="lazy"><button type="button" class="añadir-producto">añadir al carrito</button><p class="precio">7.500 cop</p></div>
+        </li>
+        <li class="producto" data-categoria="tortas" data-ingrediente="frutas" data-restriccion="">
+          <h3>torta de frutos rojos</h3>
+          <div class="imagenproducto"><img src="https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?auto=format&fit=crop&w=600&q=80" alt="Torta de frutos rojos" loading="lazy"><button type="button" class="añadir-producto">añadir al carrito</button><p class="precio">16.000 cop</p></div>
+        </li>
+        <li class="producto" data-categoria="dulces" data-ingrediente="chocolate" data-restriccion="sin-leche">
+          <h3>trufas de chocolate</h3>
+          <div class="imagenproducto"><img src="https://images.unsplash.com/photo-1548907040-4d42fcf3f20b?auto=format&fit=crop&w=600&q=80" alt="Trufas de chocolate" loading="lazy"><button type="button" class="añadir-producto">añadir al carrito</button><p class="precio">8.500 cop</p></div>
+        </li>
+        <li class="producto" data-categoria="galletas" data-ingrediente="fresa" data-restriccion="">
+          <h3>galletas rellenas de fresa</h3>
+          <div class="imagenproducto"><img src="https://images.unsplash.com/photo-1598373182133-52452f7691ef?auto=format&fit=crop&w=600&q=80" alt="Galletas rellenas de fresa" loading="lazy"><button type="button" class="añadir-producto">añadir al carrito</button><p class="precio">6.000 cop</p></div>
+        </li>
+        <li class="producto" data-categoria="postres-frios" data-ingrediente="chocolate" data-restriccion="">
+          <h3>panna cotta de chocolate</h3>
+          <div class="imagenproducto"><img src="https://images.unsplash.com/photo-1488477181946-6428a0291777?auto=format&fit=crop&w=600&q=80" alt="Panna cotta de chocolate" loading="lazy"><button type="button" class="añadir-producto">añadir al carrito</button><p class="precio">9.500 cop</p></div>
+        </li>
       </ul>
+    </section>
+    <section id="contactanos" class="seccion-contacto" hidden>
+      <div class="contacto-cabecera">
+        <span class="seccion-icono" aria-hidden="true"><i class="bi bi-chat-heart-fill"></i></span>
+        <div>
+          <h2>¿necesitas ayuda?</h2>
+          <p>Escribenos y estaremos felices de escucharte.</p>
+        </div>
+      </div>
+      <form id="form-contacto" class="form-contacto" hidden>
+        <label for="contacto-nombre">nombre</label>
+        <input type="text" id="contacto-nombre" name="nombre" autocomplete="name" required>
+        <label for="contacto-numero">numero</label>
+        <input type="tel" id="contacto-numero" name="numero" autocomplete="tel" required>
+        <label for="contacto-correo">correo</label>
+        <input type="email" id="contacto-correo" name="correo" autocomplete="email" required>
+        <label for="contacto-mensaje">mensaje</label>
+        <textarea id="contacto-mensaje" name="mensaje" rows="4" required></textarea>
+        <button type="submit">enviar mensaje <i class="bi bi-send" aria-hidden="true"></i></button>
+        <p class="contacto-respuesta" aria-live="polite"></p>
+      </form>
     </section>
   </main>
 
-  <footer id="contactanos">
-    <h2>Contactanos</h2>
-    <p>Siguenos en nuestras redes sociales: -redes sociales-</p>
+  <button class="boton-contacto-flotante" type="button" aria-label="Abrir formulario de contacto" aria-expanded="false" aria-controls="contactanos">
+    <i class="bi bi-chat-heart-fill" aria-hidden="true"></i>
+    <span>contactanos</span>
+  </button>
+
+  <footer>
+    <div class="footer-contenido">
+      <div>
+        <p class="footer-marca">Calles Dulces</p>
+        <p class="footer-frase">Un antojo con doble proposito.</p>
+      </div>
+      <div class="footer-redes">
+        <p>siguenos en redes</p>
+        <div class="redes-botones">
+          <a class="red-social" href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer" aria-label="Instagram de Calles Dulces" title="Instagram"><i class="bi bi-instagram" aria-hidden="true"></i></a>
+          <a class="red-social" href="https://www.facebook.com/" target="_blank" rel="noopener noreferrer" aria-label="Facebook de Calles Dulces" title="Facebook"><i class="bi bi-facebook" aria-hidden="true"></i></a>
+          <a class="red-social" href="https://www.tiktok.com/" target="_blank" rel="noopener noreferrer" aria-label="TikTok de Calles Dulces" title="TikTok"><i class="bi bi-tiktok" aria-hidden="true"></i></a>
+          <a class="red-social" href="https://wa.me/" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp de Calles Dulces" title="WhatsApp"><i class="bi bi-whatsapp" aria-hidden="true"></i></a>
+        </div>
+      </div>
+    </div>
+    <p class="footer-copyright">Todos los derechos reservados &copy; 2026 Calles Dulces</p>
   </footer>
   <script src="../js/options.js"></script>
 </body>

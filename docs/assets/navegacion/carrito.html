@@ -42,11 +42,51 @@
       <h2>Mi carrito</h2>
       <p>Aun no has añadido productos. Visita la <a href="tienda.html">tienda</a> para elegir tu postre.</p>
     </section>
+    <section id="contactanos" class="seccion-contacto" hidden>
+      <div class="contacto-cabecera">
+        <span class="seccion-icono" aria-hidden="true"><i class="bi bi-chat-heart-fill"></i></span>
+        <div>
+          <h2>¿necesitas ayuda?</h2>
+          <p>Escribenos y estaremos felices de escucharte.</p>
+        </div>
+      </div>
+      <form id="form-contacto" class="form-contacto" hidden>
+        <label for="contacto-nombre">nombre</label>
+        <input type="text" id="contacto-nombre" name="nombre" autocomplete="name" required>
+        <label for="contacto-numero">numero</label>
+        <input type="tel" id="contacto-numero" name="numero" autocomplete="tel" required>
+        <label for="contacto-correo">correo</label>
+        <input type="email" id="contacto-correo" name="correo" autocomplete="email" required>
+        <label for="contacto-mensaje">mensaje</label>
+        <textarea id="contacto-mensaje" name="mensaje" rows="4" required></textarea>
+        <button type="submit">enviar mensaje <i class="bi bi-send" aria-hidden="true"></i></button>
+        <p class="contacto-respuesta" aria-live="polite"></p>
+      </form>
+    </section>
   </main>
 
-  <footer id="contactanos">
-    <h2>Contactanos</h2>
-    <p>Siguenos en nuestras redes sociales: -redes sociales-</p>
+  <button class="boton-contacto-flotante" type="button" aria-label="Abrir formulario de contacto" aria-expanded="false" aria-controls="contactanos">
+    <i class="bi bi-chat-heart-fill" aria-hidden="true"></i>
+    <span>contactanos</span>
+  </button>
+
+  <footer>
+    <div class="footer-contenido">
+      <div>
+        <p class="footer-marca">Calles Dulces</p>
+        <p class="footer-frase">Un antojo con doble proposito.</p>
+      </div>
+      <div class="footer-redes">
+        <p>siguenos en redes</p>
+        <div class="redes-botones">
+          <a class="red-social" href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer" aria-label="Instagram de Calles Dulces" title="Instagram"><i class="bi bi-instagram" aria-hidden="true"></i></a>
+          <a class="red-social" href="https://www.facebook.com/" target="_blank" rel="noopener noreferrer" aria-label="Facebook de Calles Dulces" title="Facebook"><i class="bi bi-facebook" aria-hidden="true"></i></a>
+          <a class="red-social" href="https://www.tiktok.com/" target="_blank" rel="noopener noreferrer" aria-label="TikTok de Calles Dulces" title="TikTok"><i class="bi bi-tiktok" aria-hidden="true"></i></a>
+          <a class="red-social" href="https://wa.me/" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp de Calles Dulces" title="WhatsApp"><i class="bi bi-whatsapp" aria-hidden="true"></i></a>
+        </div>
+      </div>
+    </div>
+    <p class="footer-copyright">Todos los derechos reservados &copy; 2026 Calles Dulces</p>
   </footer>
   <script src="../js/options.js"></script>
 </body>

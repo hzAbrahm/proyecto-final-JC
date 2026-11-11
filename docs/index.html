@@ -50,7 +50,7 @@
       <div class="intro-decoracion intro-decoracion-izq" aria-hidden="true">✦</div>
       <div class="intro-decoracion intro-decoracion-der" aria-hidden="true">●</div>
       <div class="intro-contenido">
-        <span class="intro-etiqueta">postres con proposito</span>
+        <span class="intro-etiqueta">Un capricho con doble proposito</span>
         <img src="assets/img/logo.png" alt="Logo de Calles Dulces" width="150">
         <p>¿Cual es tu proximo antojo? Aqui buscamos darle ese toque dulce a tu dia y, al mismo tiempo, ayudar a transformar otras vidas.</p>
 
@@ -93,17 +93,39 @@
       </div>
     </section>
 
-    <section id="contactanos">
-
-
+    <section id="contactanos" class="seccion-contacto" hidden>
+      <div class="contacto-cabecera">
+        <span class="seccion-icono" aria-hidden="true"><i class="bi bi-chat-heart-fill"></i></span>
+        <div>
+          <h2>¿necesitas ayuda?</h2>
+          <p>Escribenos y estaremos felices de escucharte.</p>
+        </div>
+      </div>
+      <form id="form-contacto" class="form-contacto" hidden>
+        <label for="contacto-nombre">nombre</label>
+        <input type="text" id="contacto-nombre" name="nombre" autocomplete="name" required>
+        <label for="contacto-numero">numero</label>
+        <input type="tel" id="contacto-numero" name="numero" autocomplete="tel" required>
+        <label for="contacto-correo">correo</label>
+        <input type="email" id="contacto-correo" name="correo" autocomplete="email" required>
+        <label for="contacto-mensaje">mensaje</label>
+        <textarea id="contacto-mensaje" name="mensaje" rows="4" required></textarea>
+        <button type="submit">enviar mensaje <i class="bi bi-send" aria-hidden="true"></i></button>
+        <p class="contacto-respuesta" aria-live="polite"></p>
+      </form>
     </section>
   </main>
+
+  <button class="boton-contacto-flotante" type="button" aria-label="Abrir formulario de contacto" aria-expanded="false" aria-controls="contactanos">
+    <i class="bi bi-chat-heart-fill" aria-hidden="true"></i>
+    <span>contactanos</span>
+  </button>
 
   <footer>
     <div class="footer-contenido">
       <div>
         <p class="footer-marca">Calles Dulces</p>
-        <p class="footer-frase">Un antojo con doble proposito.</p>
+        <p class="footer-frase">Un capricho con doble proposito.</p>
       </div>
       <div class="footer-redes">
         <p>siguenos en redes</p>

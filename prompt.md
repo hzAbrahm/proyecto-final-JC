@@ -60,4 +60,10 @@ MEMORIA:
  * Se corrigio el ocultamiento inicial del formulario añadiendo una regla CSS especifica para form-contacto[hidden], evitando que display:grid lo mostrara al recargar.
  * La seccion completa de contacto, incluido su titulo y descripcion, ahora permanece oculta hasta pulsar el boton flotante; los parrafos normales usan la cuarta fuente.
  * Correccion: la fuente de los parrafos normales es var(--fuente-4), no var(--fuente-2).
+ * Los productos del catalogo ahora se muestran en tarjetas compactas; la seccion de favoritos de la semana conserva el tamaño anterior. La estrella de cuatro puntas guarda y quita favoritos personales en el navegador, independientemente de los productos mas comprados.
+ * La lista de favoritos de la semana se mantiene separada de las estrellas personales: por ahora muestra un producto de ejemplo y mas adelante debe alimentarse con las ventas del intervalo elegido.
+ * Al pulsar una tarjeta se abre una ficha con descripción, ingredientes, porción y precio de muestra, lista para reemplazar esos datos por el catálogo conectado a la base de datos.
+ * La ficha del producto aparece con una animación suave y conserva la posición de la página al abrirla y cerrarla; se respeta la preferencia de movimiento reducido.
+ * La ficha del producto ahora queda centrada en la ventana visible y no depende de su posición en el documento. El hover de la estrella conserva la escala sin activar el color de favorito, reservado para la selección con clic o toque.
+ * Al abrir la ficha del producto se bloquea el scroll del fondo; en el catálogo se fijaron las filas de título, imagen, botón y precio para alinear los botones de carrito, y la ficha también incluye ese botón.
 

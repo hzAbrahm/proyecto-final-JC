@@ -35,7 +35,6 @@
           <a href="../../index.html">inicio</a>
           <a href="tienda.html">tienda</a>
           <a href="donaciones.html">¿quieres donar?</a>
-          <a href="#contactanos">contactanos</a>
 
         </nav>
       </div>
@@ -58,15 +57,15 @@
         <span class="seccion-icono" aria-hidden="true"><i class="bi bi-star-fill"></i></span>
         <div>
           <h2>favoritos de la semana</h2>
-          <p>Los antojos que mas estan disfrutando nuestros clientes.</p>
+          <p>Los productos más comprados durante esta semana.</p>
         </div>
       </div>
-      <ul class="allproducts">
+      <ul class="allproducts" id="lista-favoritos">
         <li class="producto producto-destacado">
-          <span class="producto-etiqueta">favorito</span>
+          <span class="producto-etiqueta">más vendido</span>
           <h4>tiramisu</h4>
           <div class="imagenproducto">
-            <img src="../img/productos/tiramisu.jpg" alt="Tiramisú" width="150">
+            <img src="../img/productos/tiramisu.jpg" alt="Tiramisú" width="300">
             <button type="button" class="añadir-producto">añadir al carrito</button>
             <p class="precio">10.000 cop</p>
           </div>
@@ -122,6 +121,7 @@
           <select name="ingrediente" id="filtro-ingrediente">
             <option value="">todos</option>
             <option value="chocolate">chocolate</option>
+            <option value="cafe">cafe</option>
             <option value="frutas">frutas</option>
             <option value="vainilla">vainilla</option>
             <option value="caramelo">caramelo</option>
@@ -142,15 +142,20 @@
 
       <p id="resultado-filtros" class="resultado-filtros" aria-live="polite"></p>
       <ul class="allproducts" id="lista-productos">
+        <li class="producto" data-categoria="postres-frios" data-ingrediente="cafe" data-restriccion="">
+          <h3>tiramisu</h3>
+          <div class="imagenproducto">
+            <img src="../img/productos/tiramisu.jpg" alt="Tiramisú" width="300">
+            <button type="button" class="añadir-producto">añadir al carrito</button>
+            <p class="precio">10.000 cop</p>
+          </div>
+        </li>
         <li class="producto" data-categoria="brownies" data-ingrediente="chocolate" data-restriccion="sin-leche">
           <h3>brownie</h3>
           <div class="imagenproducto">
             <img src="../img/productos/brownie sencillo.jpg" alt="Brownie sencillo" width="300">
             <button type="button" class="añadir-producto">añadir al carrito</button>
             <p class="precio">3.000 cop</p>
-            <div class="especificaciones">
-              <p>30gr azucar, etc...</p>
-            </div>
           </div>
         </li>
         <li class="producto" data-categoria="tortas" data-ingrediente="vainilla" data-restriccion="">
@@ -227,6 +232,23 @@
         </li>
       </ul>
     </section>
+    <dialog id="detalle-producto" class="dialogo-producto" aria-labelledby="detalle-titulo">
+      <div class="detalle-contenido">
+        <button type="button" class="cerrar-detalle" aria-label="Cerrar descripción">
+          <i class="bi bi-x-lg" aria-hidden="true"></i>
+        </button>
+        <img id="detalle-imagen" src="" alt="">
+        <div class="detalle-texto">
+          <span class="tienda-etiqueta">un antojo especial</span>
+          <h2 id="detalle-titulo"></h2>
+          <p id="detalle-descripcion"></p>
+          <p class="detalle-ingredientes"><strong>Ingredientes:</strong> <span id="detalle-ingredientes"></span></p>
+          <p class="detalle-peso"><strong>Porción aproximada:</strong> <span id="detalle-peso"></span></p>
+          <p id="detalle-precio" class="precio"></p>
+          <button id="detalle-añadir-carrito" type="button" class="añadir-producto detalle-añadir-producto">añadir al carrito</button>
+        </div>
+      </div>
+    </dialog>
     <section id="contactanos" class="seccion-contacto" hidden>
       <div class="contacto-cabecera">
         <span class="seccion-icono" aria-hidden="true"><i class="bi bi-chat-heart-fill"></i></span>

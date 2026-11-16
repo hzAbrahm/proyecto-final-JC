@@ -20,9 +20,10 @@
       <h1 id="name"><a href="../../index.html">Calles Dulces</a></h1>
     </div>
     <div id="encabezado-inferior">
-      <button class="boton-carrito">
-        <a href="carrito.html" aria-label="Mi carrito"><i class="bi bi-cart3" aria-hidden="true"></i></a>
-      </button>
+      <a class="boton-carrito" href="carrito.html" aria-label="Mi carrito">
+        <i class="bi bi-cart3" aria-hidden="true"></i>
+        <span class="contador-carrito" aria-hidden="true"></span>
+      </a>
       <div id="hamburguer">
         <button id="abrir" class="boton-abrir" type="button">
           <i class="bi bi-list" aria-hidden="true"></i>
@@ -34,6 +35,7 @@
           </button>
           <a href="../../index.html">inicio</a>
           <a href="tienda.html">tienda</a>
+          <a href="cuenta.html">mi cuenta</a>
           <a href="donaciones.html">¿quieres donar?</a>
 
         </nav>
@@ -94,9 +96,11 @@
         <form id="form-recomendacion">
           <label for="recomendar-postre">¿algun postre que no este en nuestro catalogo? ¡dinoslo!</label>
           <div class="campo-accion">
-            <input type="text" id="recomendar-postre" name="recomendacion" placeholder="recomendacion..." required>
+            <input type="text" id="recomendar-postre" name="recomendacion" placeholder="recomendacion..." maxlength="80" aria-describedby="recomendacion-ayuda" required>
             <button type="submit">enviar <i class="bi bi-send" aria-hidden="true"></i></button>
           </div>
+          <p id="recomendacion-ayuda" class="formulario-ayuda">Revisamos el lenguaje antes de aceptar cada sugerencia.</p>
+          <p class="recomendacion-respuesta" id="recomendacion-respuesta" aria-live="polite"></p>
         </form>
       </div>
 
@@ -139,6 +143,25 @@
         </label>
         <button type="reset" class="limpiar-filtros">limpiar filtros</button>
       </form>
+
+      <section class="recomendador-producto" aria-labelledby="titulo-recomendador">
+        <div>
+          <h3 id="titulo-recomendador">¿No sabes qué elegir?</h3>
+          <p>Te sugerimos un postre al azar usando los filtros que seleccionaste arriba.</p>
+        </div>
+        <button type="button" id="boton-recomendar-producto" class="boton-recomendar-producto">
+          sorprenderme <i class="bi bi-shuffle" aria-hidden="true"></i>
+        </button>
+        <p id="estado-recomendador" class="estado-recomendador" aria-live="polite"></p>
+        <article id="resultado-recomendador" class="resultado-recomendador" hidden>
+          <img id="imagen-recomendador" src="" alt="">
+          <div>
+            <h4 id="nombre-recomendador"></h4>
+            <p id="precio-recomendador" class="precio"></p>
+            <button type="button" id="ver-recomendador" class="boton-ver-recomendador">ver descripción</button>
+          </div>
+        </article>
+      </section>
 
       <p id="resultado-filtros" class="resultado-filtros" aria-live="polite"></p>
       <ul class="allproducts" id="lista-productos">
@@ -230,6 +253,12 @@
           <h3>panna cotta de chocolate</h3>
           <div class="imagenproducto"><img src="https://images.unsplash.com/photo-1488477181946-6428a0291777?auto=format&fit=crop&w=600&q=80" alt="Panna cotta de chocolate" loading="lazy"><button type="button" class="añadir-producto">añadir al carrito</button><p class="precio">9.500 cop</p></div>
         </li>
+        <li class="tarjeta-ver-mas" id="tarjeta-ver-mas" hidden>
+          <button type="button" id="boton-ver-mas" aria-expanded="false" aria-controls="lista-productos">
+            <i class="bi bi-grid-3x3-gap-fill" aria-hidden="true"></i>
+            <span>ver más productos</span>
+          </button>
+        </li>
       </ul>
     </section>
     <dialog id="detalle-producto" class="dialogo-producto" aria-labelledby="detalle-titulo">
@@ -276,6 +305,30 @@
     <i class="bi bi-chat-heart-fill" aria-hidden="true"></i>
     <span>contactanos</span>
   </button>
+
+  <aside class="chatbot" aria-label="Asistente virtual Calles Dulces">
+    <section class="chatbot-panel" id="chatbot-panel" aria-label="Conversación con el asistente" hidden>
+      <div class="chatbot-panel-cabecera">
+        <div>
+          <strong>asistente dulce</strong>
+          <span>estoy aquí para ayudarte</span>
+        </div>
+        <button id="chatbot-cerrar" type="button" aria-label="Cerrar asistente"><i class="bi bi-x-lg" aria-hidden="true"></i></button>
+      </div>
+      <div class="chatbot-mensajes" id="chatbot-mensajes" aria-live="polite">
+        <p class="chatbot-mensaje chatbot-mensaje-asistente">¡Hola! Pregúntame por productos, pedidos o donaciones.</p>
+      </div>
+      <form class="chatbot-form" id="chatbot-form">
+        <label class="solo-lectores" for="chatbot-pregunta">Escribe tu pregunta</label>
+        <input id="chatbot-pregunta" name="pregunta" type="text" maxlength="240" placeholder="escribe tu pregunta..." autocomplete="off" required>
+        <button type="submit" aria-label="Enviar pregunta"><i class="bi bi-send-fill" aria-hidden="true"></i></button>
+      </form>
+    </section>
+    <button class="boton-chatbot" id="chatbot-abrir" type="button" aria-label="Abrir asistente virtual" aria-expanded="false" aria-controls="chatbot-panel">
+      <i class="bi bi-chat-dots-fill" aria-hidden="true"></i>
+      <span>¿te ayudamos?</span>
+    </button>
+  </aside>
 
   <footer>
     <div class="footer-contenido">

@@ -66,4 +66,21 @@ MEMORIA:
  * La ficha del producto aparece con una animación suave y conserva la posición de la página al abrirla y cerrarla; se respeta la preferencia de movimiento reducido.
  * La ficha del producto ahora queda centrada en la ventana visible y no depende de su posición en el documento. El hover de la estrella conserva la escala sin activar el color de favorito, reservado para la selección con clic o toque.
  * Al abrir la ficha del producto se bloquea el scroll del fondo; en el catálogo se fijaron las filas de título, imagen, botón y precio para alinear los botones de carrito, y la ficha también incluye ese botón.
+ * Se creó la página Mi cuenta con filtro para favoritos personales del navegador y secciones preparadas para compras, recibos, promociones y novedades.
+ * La tienda incluye una recomendación aleatoria que respeta los filtros activos y un filtro básico de lenguaje para las sugerencias de productos.
+ * Se añadió un prototipo de formulario de donación con agradecimiento, aclarando que aún no procesa pagos.
+ * Se añadió un chatbot compartido con respuestas guiadas en inicio, tienda, donaciones y carrito; Mi cuenta queda sin chatbot ni formulario de contacto, como pide la guía.
+ * Los enlaces de contacto se eliminaron de los menús hamburguesa porque el contacto se accede mediante el botón flotante visible.
+ * Se unificó el header de todos los HTML: todos cargan las mismas fuentes, iconos, estilos, menú hamburguesa y botón de carrito.
+ * Se corrigió la tipografía del nombre "Calles Dulces" en el header para usar la fuente gruesa Lilita One con peso 900.
+ * Los enlaces del menú directo de las páginas internas ahora reciben la misma tipografía y animaciones hover/active que los enlaces agrupados del inicio.
+ * El catálogo de la tienda limita los productos visibles a 7 en celular y 20 en PC mediante JavaScript y matchMedia; los filtros respetan ese límite.
+ * Se añadió una tarjeta "ver más productos" con fondo desenfocado. Aparece solo cuando existen productos ocultos, permite expandir y contraer el catálogo y responde con hover en PC y active en celular.
+ * Corrección del catálogo: la media query define el límite mediante --limite-productos (7 en celular y 17 en PC); la tarjeta "ver más productos" aparece como la siguiente celda únicamente cuando quedan productos ocultos.
+ * Corrección final de visibilidad: las tarjetas con atributo hidden ahora usan un selector con suficiente especificidad para no ser sobrescritas por display:flex; el contador muestra el total de coincidencias del filtro, mientras la cuadrícula muestra solo el límite responsive.
+ * El botón "ver más productos" se oculta cuando todos los productos coincidentes ya están visibles, tanto al cambiar de dispositivo como al aplicar filtros.
+ * El carrito vacío ahora muestra un estado visual completo con ícono, mensaje y botón para explorar la tienda; cuando hay productos, vuelve a mostrar únicamente el resumen del carrito.
+ * La tienda ahora incluye controles de cantidad (− / cantidad / +) en cada tarjeta; al añadir un producto se agrega la cantidad seleccionada y el carrito oculta su estado vacío desde el primer producto.
+ * Corrección del carrito: el estado visual vacío ahora se oculta realmente cuando hay productos; se añadió una regla específica para evitar que display:grid sobrescriba el atributo hidden.
+ * El carrito guarda productos y cantidades en el navegador, permite sumar, restar y quitar productos, calcula el subtotal y muestra el total de unidades en el ícono; el pago sigue pendiente de integrar.
 

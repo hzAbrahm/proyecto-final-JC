@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calles Dulces | Mi cuenta</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Lobster&family=Playwrite+IT+Trad:wght@100..400&family=Xmind:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/bootstrap-icons.css">
+</head>
+
+<body>
+  <header>
+    <div id="encabezado-superior">
+      <h1 id="name"><a href="../../index.html">Calles Dulces</a></h1>
+    </div>
+    <div id="encabezado-inferior">
+      <a class="boton-carrito" href="carrito.html" aria-label="Mi carrito">
+        <i class="bi bi-cart3" aria-hidden="true"></i>
+        <span class="contador-carrito" aria-hidden="true"></span>
+      </a>
+      <div id="hamburguer">
+        <button id="abrir" class="boton-abrir" type="button" aria-label="Abrir menú">
+          <i class="bi bi-list" aria-hidden="true"></i>
+        </button>
+        <nav aria-label="Menú principal" class="nav" id="nav">
+          <button id="cerrar" class="boton-cerrar" type="button" aria-label="Cerrar menú">
+            <i class="bi bi-x-lg" aria-hidden="true"></i>
+          </button>
+          <a href="../../index.html">inicio</a>
+          <a href="tienda.html">tienda</a>
+          <a href="cuenta.html" aria-current="page">mi cuenta</a>
+          <a href="donaciones.html">¿quieres donar?</a>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <main id="cuenta">
+    <section class="tienda-encabezado cuenta-encabezado">
+      <span class="tienda-adorno tienda-adorno-izq" aria-hidden="true">✦</span>
+      <div>
+        <span class="tienda-etiqueta">tu espacio dulce</span>
+        <h1>mi cuenta</h1>
+        <p>Encuentra tus postres favoritos y consulta aquí tus compras, recibos y novedades.</p>
+      </div>
+      <span class="tienda-adorno tienda-adorno-der" aria-hidden="true">●</span>
+    </section>
+
+    <p class="cuenta-aviso"><i class="bi bi-info-circle" aria-hidden="true"></i> Esta vista es un prototipo. Los favoritos se guardan en este navegador; compras y datos de cuenta se habilitarán al conectar la base de datos.</p>
+
+    <section class="cuenta-panel cuenta-panel-favoritos" id="favoritos-usuario" aria-labelledby="titulo-favoritos-usuario">
+      <div class="tienda-seccion-titulo">
+        <span class="seccion-icono" aria-hidden="true"><i class="bi bi-stars"></i></span>
+        <div>
+          <h2 id="titulo-favoritos-usuario">mis favoritos</h2>
+          <p>Los postres que marcaste con la estrella en la tienda.</p>
+        </div>
+      </div>
+      <form id="filtros-favoritos-cuenta" class="filtros-favoritos-cuenta">
+        <label for="buscar-favorito-cuenta">buscar en mis favoritos
+          <input id="buscar-favorito-cuenta" name="busqueda" type="search" placeholder="nombre del postre...">
+        </label>
+        <label for="categoria-favorito-cuenta">categoría
+          <select id="categoria-favorito-cuenta" name="categoria">
+            <option value="">todas</option>
+            <option value="brownies">brownies</option>
+            <option value="tortas">tortas</option>
+            <option value="galletas">galletas</option>
+            <option value="postres-frios">postres fríos</option>
+            <option value="dulces">dulces</option>
+          </select>
+        </label>
+        <button type="reset" class="limpiar-filtros">limpiar</button>
+      </form>
+      <p id="estado-favoritos-cuenta" class="estado-favoritos-cuenta" aria-live="polite"></p>
+      <ul class="allproducts" id="cuenta-lista-favoritos"></ul>
+      <a class="boton ir-a-tienda" href="tienda.html">explorar la tienda <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
+    </section>
+
+    <div class="cuenta-paneles">
+      <section class="cuenta-panel" id="compras-hechas">
+        <span class="cuenta-panel-icono" aria-hidden="true"><i class="bi bi-bag-check-fill"></i></span>
+        <h2>compras hechas</h2>
+        <p class="cuenta-vacio">Cuando realices compras con tu cuenta, aparecerán aquí.</p>
+      </section>
+      <section class="cuenta-panel" id="recibos-pago">
+        <span class="cuenta-panel-icono" aria-hidden="true"><i class="bi bi-receipt"></i></span>
+        <h2>recibos de pago</h2>
+        <p class="cuenta-vacio">Tus recibos estarán disponibles aquí cuando se habilite el registro de compras.</p>
+      </section>
+      <section class="cuenta-panel" id="promociones-personales">
+        <span class="cuenta-panel-icono" aria-hidden="true"><i class="bi bi-ticket-perforated-fill"></i></span>
+        <h2>promociones personales</h2>
+        <p class="cuenta-vacio">Aquí podrás consultar promociones preparadas para ti.</p>
+      </section>
+      <section class="cuenta-panel" id="novedades-calles-dulces">
+        <span class="cuenta-panel-icono" aria-hidden="true"><i class="bi bi-megaphone-fill"></i></span>
+        <h2>novedades sobre Calles Dulces</h2>
+        <p class="cuenta-vacio">Pronto compartiremos novedades sobre nuestros productos e iniciativas.</p>
+      </section>
+    </div>
+  </main>
+
+  <footer>
+    <div class="footer-contenido">
+      <div>
+        <p class="footer-marca">Calles Dulces</p>
+        <p class="footer-frase">Un antojo con doble proposito.</p>
+      </div>
+      <div class="footer-redes">
+        <p>siguenos en redes</p>
+        <div class="redes-botones">
+          <a class="red-social" href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer" aria-label="Instagram de Calles Dulces" title="Instagram"><i class="bi bi-instagram" aria-hidden="true"></i></a>
+          <a class="red-social" href="https://www.facebook.com/" target="_blank" rel="noopener noreferrer" aria-label="Facebook de Calles Dulces" title="Facebook"><i class="bi bi-facebook" aria-hidden="true"></i></a>
+          <a class="red-social" href="https://www.tiktok.com/" target="_blank" rel="noopener noreferrer" aria-label="TikTok de Calles Dulces" title="TikTok"><i class="bi bi-tiktok" aria-hidden="true"></i></a>
+          <a class="red-social" href="https://wa.me/" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp de Calles Dulces" title="WhatsApp"><i class="bi bi-whatsapp" aria-hidden="true"></i></a>
+        </div>
+      </div>
+    </div>
+    <p class="footer-copyright">Todos los derechos reservados &copy; 2026 Calles Dulces</p>
+  </footer>
+
+  <script src="../js/options.js"></script>
+</body>
+
+</html>

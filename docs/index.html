@@ -20,10 +20,10 @@
       <h1 id="name"><a href="index.html">Calles Dulces</a></h1>
     </div>
     <div id="encabezado-inferior">
-      <button class="boton-carrito">
-        <a href="assets/navegacion/carrito.html" aria-label="Mi carrito"><i class="bi bi-cart3"
-            aria-hidden="true"></i></a>
-      </button>
+      <a class="boton-carrito" href="assets/navegacion/carrito.html" aria-label="Mi carrito">
+        <i class="bi bi-cart3" aria-hidden="true"></i>
+        <span class="contador-carrito" aria-hidden="true"></span>
+      </a>
       <div id="hamburguer">
         <button id="abrir" class="boton-abrir" type="button">
           <i class="bi bi-list" aria-hidden="true">
@@ -36,6 +36,7 @@
           <ul class="menu-navegante">
             <li><a href="#introduccion">inicio</a></li>
             <li><a href="assets/navegacion/tienda.html">tienda</a></li>
+            <li><a href="assets/navegacion/cuenta.html">mi cuenta</a></li>
             <li><a href="assets/navegacion/donaciones.html">¿quieres donar?</a></li>
           </ul>
 
@@ -119,6 +120,30 @@
     <i class="bi bi-chat-heart-fill" aria-hidden="true"></i>
     <span>contactanos</span>
   </button>
+
+  <aside class="chatbot" aria-label="Asistente virtual Calles Dulces">
+    <section class="chatbot-panel" id="chatbot-panel" aria-label="Conversación con el asistente" hidden>
+      <div class="chatbot-panel-cabecera">
+        <div>
+          <strong>asistente dulce</strong>
+          <span>estoy aquí para ayudarte</span>
+        </div>
+        <button id="chatbot-cerrar" type="button" aria-label="Cerrar asistente"><i class="bi bi-x-lg" aria-hidden="true"></i></button>
+      </div>
+      <div class="chatbot-mensajes" id="chatbot-mensajes" aria-live="polite">
+        <p class="chatbot-mensaje chatbot-mensaje-asistente">¡Hola! Pregúntame por productos, pedidos o donaciones.</p>
+      </div>
+      <form class="chatbot-form" id="chatbot-form">
+        <label class="solo-lectores" for="chatbot-pregunta">Escribe tu pregunta</label>
+        <input id="chatbot-pregunta" name="pregunta" type="text" maxlength="240" placeholder="escribe tu pregunta..." autocomplete="off" required>
+        <button type="submit" aria-label="Enviar pregunta"><i class="bi bi-send-fill" aria-hidden="true"></i></button>
+      </form>
+    </section>
+    <button class="boton-chatbot" id="chatbot-abrir" type="button" aria-label="Abrir asistente virtual" aria-expanded="false" aria-controls="chatbot-panel">
+      <i class="bi bi-chat-dots-fill" aria-hidden="true"></i>
+      <span>¿te ayudamos?</span>
+    </button>
+  </aside>
 
   <footer>
     <div class="footer-contenido">

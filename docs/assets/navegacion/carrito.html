@@ -18,9 +18,10 @@
       <h1 id="name"><a href="../../index.html">Calles Dulces</a></h1>
     </div>
     <div id="encabezado-inferior">
-      <button class="boton-carrito">
-        <a href="carrito.html" aria-label="Mi carrito"><i class="bi bi-cart3" aria-hidden="true"></i></a>
-      </button>
+      <a class="boton-carrito" href="carrito.html" aria-label="Mi carrito">
+        <i class="bi bi-cart3" aria-hidden="true"></i>
+        <span class="contador-carrito" aria-hidden="true"></span>
+      </a>
       <div id="hamburguer">
         <button id="abrir" class="boton-abrir" type="button">
           <i class="bi bi-list" aria-hidden="true"></i>
@@ -32,6 +33,7 @@
           </button>
           <a href="../../index.html">inicio</a>
           <a href="tienda.html">tienda</a>
+          <a href="cuenta.html">mi cuenta</a>
           <a href="donaciones.html">¿quieres donar?</a>
 
         </nav>
@@ -40,9 +42,32 @@
   </header>
 
   <main>
-    <section id="lista-carrito">
-      <h2>Mi carrito</h2>
-      <p>Aun no has añadido productos. Visita la <a href="tienda.html">tienda</a> para elegir tu postre.</p>
+    <section id="lista-carrito" class="carrito-panel" aria-labelledby="titulo-carrito">
+      <div class="tienda-seccion-titulo">
+        <span class="seccion-icono" aria-hidden="true"><i class="bi bi-cart3"></i></span>
+        <div>
+          <h1 id="titulo-carrito">mi carrito</h1>
+          <p>Revisa tus antojos antes de continuar.</p>
+        </div>
+      </div>
+      <div id="estado-carrito" class="estado-carrito" aria-live="polite">
+        <div class="carrito-vacio">
+          <div class="carrito-vacio-icono" aria-hidden="true"><i class="bi bi-basket3"></i></div>
+          <h2>tu carrito esta vacio</h2>
+          <p>Aun no has añadido productos. Explora la tienda y encuentra tu proximo antojo.</p>
+          <a class="boton ir-a-tienda" href="tienda.html">explorar tienda <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
+        </div>
+        <p class="estado-carrito-resumen" hidden></p>
+      </div>
+      <div id="contenido-carrito" hidden>
+        <ul id="productos-carrito" class="productos-carrito"></ul>
+        <div class="resumen-carrito">
+          <p>subtotal <strong id="subtotal-carrito"></strong></p>
+          <p class="aviso-carrito">El pago y el envío todavía no están disponibles en esta demostración.</p>
+          <button id="vaciar-carrito" type="button" class="boton-vaciar-carrito">vaciar carrito</button>
+          <a class="boton ir-a-tienda" href="tienda.html">seguir comprando <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
+        </div>
+      </div>
     </section>
     <section id="contactanos" class="seccion-contacto" hidden>
       <div class="contacto-cabecera">
@@ -71,6 +96,30 @@
     <i class="bi bi-chat-heart-fill" aria-hidden="true"></i>
     <span>contactanos</span>
   </button>
+
+  <aside class="chatbot" aria-label="Asistente virtual Calles Dulces">
+    <section class="chatbot-panel" id="chatbot-panel" aria-label="Conversación con el asistente" hidden>
+      <div class="chatbot-panel-cabecera">
+        <div>
+          <strong>asistente dulce</strong>
+          <span>estoy aquí para ayudarte</span>
+        </div>
+        <button id="chatbot-cerrar" type="button" aria-label="Cerrar asistente"><i class="bi bi-x-lg" aria-hidden="true"></i></button>
+      </div>
+      <div class="chatbot-mensajes" id="chatbot-mensajes" aria-live="polite">
+        <p class="chatbot-mensaje chatbot-mensaje-asistente">¡Hola! Pregúntame por productos, pedidos o donaciones.</p>
+      </div>
+      <form class="chatbot-form" id="chatbot-form">
+        <label class="solo-lectores" for="chatbot-pregunta">Escribe tu pregunta</label>
+        <input id="chatbot-pregunta" name="pregunta" type="text" maxlength="240" placeholder="escribe tu pregunta..." autocomplete="off" required>
+        <button type="submit" aria-label="Enviar pregunta"><i class="bi bi-send-fill" aria-hidden="true"></i></button>
+      </form>
+    </section>
+    <button class="boton-chatbot" id="chatbot-abrir" type="button" aria-label="Abrir asistente virtual" aria-expanded="false" aria-controls="chatbot-panel">
+      <i class="bi bi-chat-dots-fill" aria-hidden="true"></i>
+      <span>¿te ayudamos?</span>
+    </button>
+  </aside>
 
   <footer>
     <div class="footer-contenido">

@@ -13,6 +13,7 @@ REGLAS:
  Estos principalmente los separo con /* y que parte de la pagina es*
  -Solo trabajaremos seccion por seccion.(a excepcion de que yo lo pida)
  -Para el desarrolo de js, me explicaras mas a detalle como y que hacer/hiciste, como funciona y el porque.
+ -Cada icono que necesites siempre intenta sacarlo del repertorio de icono sde botstrap.
 
 CONTEXTO:
 
@@ -82,5 +83,9 @@ MEMORIA:
  * El carrito vacío ahora muestra un estado visual completo con ícono, mensaje y botón para explorar la tienda; cuando hay productos, vuelve a mostrar únicamente el resumen del carrito.
  * La tienda ahora incluye controles de cantidad (− / cantidad / +) en cada tarjeta; al añadir un producto se agrega la cantidad seleccionada y el carrito oculta su estado vacío desde el primer producto.
  * Corrección del carrito: el estado visual vacío ahora se oculta realmente cuando hay productos; se añadió una regla específica para evitar que display:grid sobrescriba el atributo hidden.
- * El carrito guarda productos y cantidades en el navegador, permite sumar, restar y quitar productos, calcula el subtotal y muestra el total de unidades en el ícono; el pago sigue pendiente de integrar.
+ * El checkout local ofrece PSE, Nequi, Daviplata, Visa/Mastercard, Bre-B y contraentrega; valida los campos, simula estados pendiente/aprobado/rechazado/cancelado y solo crea pedidos con pago aprobado o contraentrega registrada. No guarda datos de tarjeta.
+ * Mi cuenta tiene menú lateral para alternar secciones, favoritos con controles de cantidad, acceso de demostración y foto de perfil o silueta en el header; las compras confirmadas y recibos se guardan localmente.
+ * Contactos, sugerencias y solicitudes de donación se guardan localmente para consultarlas en el panel de administración de demostración; la autenticación y sincronización reales quedan para el backend.
+ * Los adornos de las cabeceras de tienda y Mi cuenta se mantienen fuera del inicio del texto para evitar superposiciones en celular.
+ * Se preparó una API local con Express y Mongoose para conectar el frontend con MongoDB Atlas; la URI vive en .env, excluido de Git, y /api/health confirma el ping al clúster.
 

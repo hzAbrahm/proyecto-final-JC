@@ -24,6 +24,10 @@
         <i class="bi bi-cart3" aria-hidden="true"></i>
         <span class="contador-carrito" aria-hidden="true"></span>
       </a>
+      <a class="avatar-sesion" data-avatar-sesion href="cuenta.html" aria-label="Mi perfil" title="Mi perfil" hidden>
+        <img data-avatar-imagen alt="" hidden>
+        <i class="bi bi-person-fill" data-avatar-silueta aria-hidden="true"></i>
+      </a>
       <div id="hamburguer">
         <button id="abrir" class="boton-abrir" type="button">
           <i class="bi bi-list" aria-hidden="true"></i>
@@ -99,7 +103,7 @@
             <input type="text" id="recomendar-postre" name="recomendacion" placeholder="recomendacion..." maxlength="80" aria-describedby="recomendacion-ayuda" required>
             <button type="submit">enviar <i class="bi bi-send" aria-hidden="true"></i></button>
           </div>
-          <p id="recomendacion-ayuda" class="formulario-ayuda">Revisamos el lenguaje antes de aceptar cada sugerencia.</p>
+          <p id="recomendacion-ayuda" class="formulario-ayuda">Revisamos el lenguaje y guardamos las sugerencias de prueba en este navegador.</p>
           <p class="recomendacion-respuesta" id="recomendacion-respuesta" aria-live="polite"></p>
         </form>
       </div>
@@ -274,6 +278,11 @@
           <p class="detalle-ingredientes"><strong>Ingredientes:</strong> <span id="detalle-ingredientes"></span></p>
           <p class="detalle-peso"><strong>Porción aproximada:</strong> <span id="detalle-peso"></span></p>
           <p id="detalle-precio" class="precio"></p>
+          <div class="controles-tienda controles-cantidad-detalle" id="controles-cantidad-detalle" aria-label="Cantidad a añadir">
+            <button type="button" data-accion="restar-detalle" aria-label="Disminuir cantidad">−</button>
+            <output id="cantidad-detalle" aria-live="polite">1</output>
+            <button type="button" data-accion="sumar-detalle" aria-label="Aumentar cantidad">+</button>
+          </div>
           <button id="detalle-añadir-carrito" type="button" class="añadir-producto detalle-añadir-producto">añadir al carrito</button>
         </div>
       </div>
@@ -290,7 +299,7 @@
         <label for="contacto-nombre">nombre</label>
         <input type="text" id="contacto-nombre" name="nombre" autocomplete="name" required>
         <label for="contacto-numero">numero</label>
-        <input type="tel" id="contacto-numero" name="numero" autocomplete="tel" required>
+        <input type="tel" id="contacto-numero" name="numero" inputmode="numeric" autocomplete="tel" pattern="[0-9]{10}" minlength="10" maxlength="10" required>
         <label for="contacto-correo">correo</label>
         <input type="email" id="contacto-correo" name="correo" autocomplete="email" required>
         <label for="contacto-mensaje">mensaje</label>

@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calles Dulces | Administración</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Lobster&family=Playwrite+IT+Trad:wght@100..400&family=Xmind:ital,wght@0,100..900;1,0..900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/bootstrap-icons.css">
+</head>
+
+<body>
+  <header>
+    <div id="encabezado-superior">
+      <h1 id="name"><a href="../../index.html">Calles Dulces</a></h1>
+    </div>
+    <div id="encabezado-inferior">
+      <a class="boton-carrito" href="carrito.html" aria-label="Mi carrito">
+        <i class="bi bi-cart3" aria-hidden="true"></i>
+        <span class="contador-carrito" aria-hidden="true"></span>
+      </a>
+      <a class="avatar-sesion" data-avatar-sesion href="cuenta.html" aria-label="Mi perfil" title="Mi perfil" hidden>
+        <img data-avatar-imagen alt="" hidden>
+        <i class="bi bi-person-fill" data-avatar-silueta aria-hidden="true"></i>
+      </a>
+      <div id="hamburguer">
+        <button id="abrir" class="boton-abrir" type="button" aria-label="Abrir menú">
+          <i class="bi bi-list" aria-hidden="true"></i>
+        </button>
+        <nav aria-label="Menú principal" class="nav" id="nav">
+          <button id="cerrar" class="boton-cerrar" type="button" aria-label="Cerrar menú">
+            <i class="bi bi-x-lg" aria-hidden="true"></i>
+          </button>
+          <a href="../../index.html">inicio</a>
+          <a href="tienda.html">tienda</a>
+          <a href="cuenta.html">mi cuenta</a>
+          <a href="donaciones.html">¿quieres donar?</a>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <main id="admin">
+    <section class="tienda-encabezado admin-encabezado">
+      <span class="tienda-adorno tienda-adorno-der" aria-hidden="true">●</span>
+      <div>
+        <span class="tienda-etiqueta">zona del equipo</span>
+        <h1>administración</h1>
+        <p>Consulta los registros de prueba y revisa el estado de los pedidos.</p>
+      </div>
+    </section>
+
+    <section id="admin-acceso" class="admin-panel" aria-labelledby="titulo-admin-acceso">
+      <span class="seccion-icono" aria-hidden="true"><i class="bi bi-shield-lock-fill"></i></span>
+      <h2 id="titulo-admin-acceso">iniciar sesión de administración</h2>
+      <p class="admin-aviso">Acceso de demostración local. Cualquier correo válido y contraseña de 8 caracteres permiten ver el panel; no se autentica con un servidor.</p>
+      <form id="form-admin-acceso" class="form-admin-acceso">
+        <label>correo del equipo
+          <input name="correo" type="email" autocomplete="username" required>
+        </label>
+        <label>contraseña de prueba
+          <input name="contrasena" type="password" autocomplete="current-password" minlength="8" required>
+        </label>
+        <p id="estado-admin-acceso" class="estado-admin-acceso" aria-live="polite"></p>
+        <button type="submit" class="boton">entrar al panel</button>
+      </form>
+    </section>
+
+    <section id="panel-admin" class="admin-panel panel-admin" aria-labelledby="titulo-panel-admin" hidden>
+      <div class="admin-panel-cabecera">
+        <div>
+          <span class="tienda-etiqueta">datos de este navegador</span>
+          <h2 id="titulo-panel-admin">panel de gestión</h2>
+        </div>
+        <button id="cerrar-admin" type="button" class="boton-secundario">cerrar sesión</button>
+      </div>
+      <p class="admin-aviso">Pedidos y solicitudes siguen guardándose en este navegador. El catálogo de prueba sí se consulta y se guarda en Atlas mientras el servidor esté en modo de desarrollo local. Este acceso todavía no verifica una cuenta real.</p>
+      <div class="admin-metricas">
+        <article><span class="bi bi-grid-3x3-gap-fill" aria-hidden="true"></span><strong id="admin-total-productos">—</strong><p>productos en Atlas</p></article>
+        <article><span class="bi bi-bag-check-fill" aria-hidden="true"></span><strong id="admin-total-pedidos">0</strong><p>pedidos confirmados</p></article>
+        <article><span class="bi bi-inbox-fill" aria-hidden="true"></span><strong id="admin-total-solicitudes">0</strong><p>solicitudes registradas</p></article>
+      </div>
+
+      <section class="admin-lista-seccion" aria-labelledby="titulo-admin-productos">
+        <h3 id="titulo-admin-productos">catálogo guardado en MongoDB</h3>
+        <p class="admin-aviso">Esta prueba solo permite crear productos desde tu computador mientras `NODE_ENV=development`. No pongas credenciales ni datos sensibles en estos campos.</p>
+        <form id="form-admin-producto" class="form-admin-producto">
+          <label for="producto-admin-nombre">nombre del producto
+            <input id="producto-admin-nombre" name="name" type="text" maxlength="100" required>
+          </label>
+          <label for="producto-admin-categoria">categoría
+            <select id="producto-admin-categoria" name="category" required>
+              <option value="">elige una categoría</option>
+              <option value="postres-frios">postres fríos</option>
+              <option value="brownies">brownies</option>
+              <option value="tortas">tortas</option>
+              <option value="galletas">galletas</option>
+              <option value="dulces">dulces</option>
+            </select>
+          </label>
+          <label for="producto-admin-precio">precio en pesos colombianos (COP)
+            <input id="producto-admin-precio" name="priceCOP" type="number" min="1" step="1" inputmode="numeric" required>
+          </label>
+          <label for="producto-admin-peso">peso en gramos (opcional)
+            <input id="producto-admin-peso" name="weightGrams" type="number" min="1" step="1" inputmode="numeric">
+          </label>
+          <label class="admin-campo-producto-ancho" for="producto-admin-descripcion">descripción (opcional)
+            <textarea id="producto-admin-descripcion" name="description" rows="3" maxlength="1200"></textarea>
+          </label>
+          <label class="admin-campo-producto-ancho" for="producto-admin-ingredientes">ingredientes (opcional)
+            <textarea id="producto-admin-ingredientes" name="ingredients" rows="2" maxlength="600"></textarea>
+          </label>
+          <label class="admin-campo-producto-ancho" for="producto-admin-imagen">ruta de imagen (opcional)
+            <input id="producto-admin-imagen" name="imageUrl" type="text" maxlength="500" placeholder="/assets/img/productos/tiramisu.jpg">
+          </label>
+          <button type="submit" class="boton admin-campo-producto-ancho">guardar producto de prueba</button>
+        </form>
+        <p id="estado-producto-admin" class="estado-admin-acceso" aria-live="polite">Se consultará Atlas cuando abras este panel.</p>
+        <ul id="admin-lista-productos-db" class="lista-admin-registros"></ul>
+        <p id="admin-sin-productos-db" class="admin-vacio">Todavía no hay productos activos en la base.</p>
+      </section>
+
+      <section class="admin-lista-seccion" aria-labelledby="titulo-admin-pedidos">
+        <h3 id="titulo-admin-pedidos">pedidos recientes</h3>
+        <ul id="admin-lista-pedidos" class="lista-admin-registros"></ul>
+        <p id="admin-sin-pedidos" class="admin-vacio">Aún no hay pedidos confirmados.</p>
+      </section>
+      <section class="admin-lista-seccion" aria-labelledby="titulo-admin-pagos">
+        <h3 id="titulo-admin-pagos">transacciones</h3>
+        <ul id="admin-lista-pagos" class="lista-admin-registros"></ul>
+        <p id="admin-sin-pagos" class="admin-vacio">Aún no hay transacciones de prueba.</p>
+      </section>
+      <section class="admin-lista-seccion" aria-labelledby="titulo-admin-solicitudes">
+        <h3 id="titulo-admin-solicitudes">contacto, sugerencias y donaciones</h3>
+        <ul id="admin-lista-solicitudes" class="lista-admin-registros"></ul>
+        <p id="admin-sin-solicitudes" class="admin-vacio">Aún no hay solicitudes registradas.</p>
+      </section>
+    </section>
+    <section id="contactanos" class="seccion-contacto" hidden>
+    <div class="contacto-cabecera">
+      <span class="seccion-icono" aria-hidden="true"><i class="bi bi-chat-heart-fill"></i></span>
+      <div>
+        <h2>¿necesitas ayuda?</h2>
+        <p>Escríbenos y estaremos felices de escucharte.</p>
+      </div>
+    </div>
+    <form id="form-contacto" class="form-contacto" hidden>
+      <label for="contacto-nombre">nombre</label>
+      <input type="text" id="contacto-nombre" name="nombre" autocomplete="name" required>
+      <label for="contacto-numero">número</label>
+      <input type="tel" id="contacto-numero" name="numero" inputmode="numeric" autocomplete="tel" pattern="[0-9]{10}" minlength="10" maxlength="10" required>
+      <label for="contacto-correo">correo</label>
+      <input type="email" id="contacto-correo" name="correo" autocomplete="email" required>
+      <label for="contacto-mensaje">mensaje</label>
+      <textarea id="contacto-mensaje" name="mensaje" rows="4" required></textarea>
+      <button type="submit">enviar mensaje <i class="bi bi-send" aria-hidden="true"></i></button>
+      <p class="contacto-respuesta" aria-live="polite"></p>
+    </form>
+    </section>
+  </main>
+
+  <button class="boton-contacto-flotante" type="button" aria-label="Abrir formulario de contacto" aria-expanded="false" aria-controls="contactanos">
+    <i class="bi bi-chat-heart-fill" aria-hidden="true"></i>
+    <span>contactanos</span>
+  </button>
+  <aside class="chatbot" aria-label="Asistente virtual Calles Dulces">
+    <section class="chatbot-panel" id="chatbot-panel" aria-label="Conversación con el asistente" hidden>
+      <div class="chatbot-panel-cabecera">
+        <div>
+          <strong>asistente dulce</strong>
+          <span>estoy aquí para ayudarte</span>
+        </div>
+        <button id="chatbot-cerrar" type="button" aria-label="Cerrar asistente"><i class="bi bi-x-lg" aria-hidden="true"></i></button>
+      </div>
+      <div class="chatbot-mensajes" id="chatbot-mensajes" aria-live="polite">
+        <p class="chatbot-mensaje chatbot-mensaje-asistente">¡Hola! Pregúntame por productos, pedidos o donaciones.</p>
+      </div>
+      <form class="chatbot-form" id="chatbot-form">
+        <label class="solo-lectores" for="chatbot-pregunta">Escribe tu pregunta</label>
+        <input id="chatbot-pregunta" name="pregunta" type="text" maxlength="240" placeholder="escribe tu pregunta..." autocomplete="off" required>
+        <button type="submit" aria-label="Enviar pregunta"><i class="bi bi-send-fill" aria-hidden="true"></i></button>
+      </form>
+    </section>
+    <button class="boton-chatbot" id="chatbot-abrir" type="button" aria-label="Abrir asistente virtual" aria-expanded="false" aria-controls="chatbot-panel">
+      <i class="bi bi-chat-dots-fill" aria-hidden="true"></i>
+      <span>¿te ayudamos?</span>
+    </button>
+  </aside>
+
+  <footer>
+    <div class="footer-contenido">
+      <div>
+        <p class="footer-marca">Calles Dulces</p>
+        <p class="footer-frase">Un antojo con doble propósito.</p>
+      </div>
+      <div class="footer-redes">
+        <p>síguenos en redes</p>
+        <div class="redes-botones">
+          <a class="red-social" href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer" aria-label="Instagram de Calles Dulces" title="Instagram"><i class="bi bi-instagram" aria-hidden="true"></i></a>
+          <a class="red-social" href="https://www.facebook.com/" target="_blank" rel="noopener noreferrer" aria-label="Facebook de Calles Dulces" title="Facebook"><i class="bi bi-facebook" aria-hidden="true"></i></a>
+          <a class="red-social" href="https://www.tiktok.com/" target="_blank" rel="noopener noreferrer" aria-label="TikTok de Calles Dulces" title="TikTok"><i class="bi bi-tiktok" aria-hidden="true"></i></a>
+          <a class="red-social" href="https://wa.me/" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp de Calles Dulces" title="WhatsApp"><i class="bi bi-whatsapp" aria-hidden="true"></i></a>
+        </div>
+      </div>
+    </div>
+    <p class="footer-copyright">Todos los derechos reservados &copy; 2026 Calles Dulces</p>
+  </footer>
+  <script src="../js/options.js"></script>
+</body>
+
+</html>

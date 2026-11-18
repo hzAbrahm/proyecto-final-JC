@@ -22,6 +22,10 @@
         <i class="bi bi-cart3" aria-hidden="true"></i>
         <span class="contador-carrito" aria-hidden="true"></span>
       </a>
+      <a class="avatar-sesion" data-avatar-sesion href="cuenta.html" aria-label="Mi perfil" title="Mi perfil" hidden>
+        <img data-avatar-imagen alt="" hidden>
+        <i class="bi bi-person-fill" data-avatar-silueta aria-hidden="true"></i>
+      </a>
       <div id="hamburguer">
         <button id="abrir" class="boton-abrir" type="button" aria-label="Abrir menú">
           <i class="bi bi-list" aria-hidden="true"></i>
@@ -50,58 +54,119 @@
       <span class="tienda-adorno tienda-adorno-der" aria-hidden="true">●</span>
     </section>
 
-    <p class="cuenta-aviso"><i class="bi bi-info-circle" aria-hidden="true"></i> Esta vista es un prototipo. Los favoritos se guardan en este navegador; compras y datos de cuenta se habilitarán al conectar la base de datos.</p>
-
-    <section class="cuenta-panel cuenta-panel-favoritos" id="favoritos-usuario" aria-labelledby="titulo-favoritos-usuario">
-      <div class="tienda-seccion-titulo">
-        <span class="seccion-icono" aria-hidden="true"><i class="bi bi-stars"></i></span>
+    <section class="cuenta-panel cuenta-acceso" aria-labelledby="titulo-acceso-cuenta">
+      <div class="cuenta-acceso-cabecera">
         <div>
-          <h2 id="titulo-favoritos-usuario">mis favoritos</h2>
-          <p>Los postres que marcaste con la estrella en la tienda.</p>
+          <h2 id="titulo-acceso-cuenta">Accede a tu cuenta</h2>
+          <p>Guarda tus datos en este navegador para probar la experiencia.</p>
+        </div>
+        <div class="avatar-perfil-grande" aria-hidden="true">
+          <img id="cuenta-avatar-imagen" alt="" hidden>
+          <i id="cuenta-avatar-silueta" class="bi bi-person-fill"></i>
         </div>
       </div>
-      <form id="filtros-favoritos-cuenta" class="filtros-favoritos-cuenta">
-        <label for="buscar-favorito-cuenta">buscar en mis favoritos
-          <input id="buscar-favorito-cuenta" name="busqueda" type="search" placeholder="nombre del postre...">
+      <div id="cuenta-sesion-activa" class="cuenta-sesion-activa" hidden>
+        <p id="saludo-cuenta" aria-live="polite"></p>
+        <button id="cerrar-sesion" type="button" class="boton-secundario">cerrar sesión</button>
+      </div>
+      <form id="form-cuenta-acceso" class="form-cuenta-acceso">
+        <div class="selector-modo-cuenta" role="group" aria-label="Tipo de acceso">
+          <button type="button" data-modo-cuenta="registro" aria-pressed="true">crear cuenta</button>
+          <button type="button" data-modo-cuenta="ingreso" aria-pressed="false">iniciar sesión</button>
+        </div>
+        <label id="campo-nombre-cuenta">nombre completo
+          <input name="nombre" type="text" autocomplete="name" minlength="2" required>
         </label>
-        <label for="categoria-favorito-cuenta">categoría
-          <select id="categoria-favorito-cuenta" name="categoria">
-            <option value="">todas</option>
-            <option value="brownies">brownies</option>
-            <option value="tortas">tortas</option>
-            <option value="galletas">galletas</option>
-            <option value="postres-frios">postres fríos</option>
-            <option value="dulces">dulces</option>
-          </select>
+        <label>correo electrónico
+          <input name="correo" type="email" autocomplete="email" required>
         </label>
-        <button type="reset" class="limpiar-filtros">limpiar</button>
+        <label>contraseña
+          <input name="contrasena" type="password" autocomplete="new-password" minlength="8" required>
+        </label>
+        <label id="campo-confirmar-cuenta">confirmar contraseña
+          <input name="confirmar" type="password" autocomplete="new-password" minlength="8" required>
+        </label>
+        <label id="campo-foto-cuenta">foto de perfil (opcional)
+          <input name="foto" type="file" accept="image/*">
+        </label>
+        <p id="estado-cuenta-acceso" class="estado-cuenta-acceso" aria-live="polite"></p>
+        <button id="enviar-cuenta-acceso" type="submit" class="boton">crear cuenta</button>
+        <p class="aviso-demo-cuenta">Prototipo local: no verifica identidades ni envía contraseñas. No uses una contraseña real.</p>
       </form>
-      <p id="estado-favoritos-cuenta" class="estado-favoritos-cuenta" aria-live="polite"></p>
-      <ul class="allproducts" id="cuenta-lista-favoritos"></ul>
-      <a class="boton ir-a-tienda" href="tienda.html">explorar la tienda <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
+      <div class="cuenta-acceso-admin">
+        <a href="admin.html">¿Eres parte del equipo? ir a administración</a>
+      </div>
     </section>
 
-    <div class="cuenta-paneles">
-      <section class="cuenta-panel" id="compras-hechas">
-        <span class="cuenta-panel-icono" aria-hidden="true"><i class="bi bi-bag-check-fill"></i></span>
-        <h2>compras hechas</h2>
-        <p class="cuenta-vacio">Cuando realices compras con tu cuenta, aparecerán aquí.</p>
-      </section>
-      <section class="cuenta-panel" id="recibos-pago">
-        <span class="cuenta-panel-icono" aria-hidden="true"><i class="bi bi-receipt"></i></span>
-        <h2>recibos de pago</h2>
-        <p class="cuenta-vacio">Tus recibos estarán disponibles aquí cuando se habilite el registro de compras.</p>
-      </section>
-      <section class="cuenta-panel" id="promociones-personales">
-        <span class="cuenta-panel-icono" aria-hidden="true"><i class="bi bi-ticket-perforated-fill"></i></span>
-        <h2>promociones personales</h2>
-        <p class="cuenta-vacio">Aquí podrás consultar promociones preparadas para ti.</p>
-      </section>
-      <section class="cuenta-panel" id="novedades-calles-dulces">
-        <span class="cuenta-panel-icono" aria-hidden="true"><i class="bi bi-megaphone-fill"></i></span>
-        <h2>novedades sobre Calles Dulces</h2>
-        <p class="cuenta-vacio">Pronto compartiremos novedades sobre nuestros productos e iniciativas.</p>
-      </section>
+    <p class="cuenta-aviso"><i class="bi bi-info-circle" aria-hidden="true"></i> Prototipo local: perfil, favoritos y pedidos se guardan solo en este navegador. La autenticación real y la sincronización requieren el backend.</p>
+
+    <div class="cuenta-layout">
+      <aside class="cuenta-sidebar">
+        <button id="cuenta-menu-toggle" class="cuenta-menu-toggle" type="button" aria-expanded="false" aria-controls="cuenta-menu-secciones">
+          <i class="bi bi-list" aria-hidden="true"></i><span>secciones</span>
+        </button>
+        <nav id="cuenta-menu-secciones" class="cuenta-menu-secciones" aria-label="Secciones de mi cuenta" hidden>
+          <button type="button" data-seccion-cuenta="favoritos-usuario" aria-current="page">mis favoritos</button>
+          <button type="button" data-seccion-cuenta="compras-hechas">compras hechas</button>
+          <button type="button" data-seccion-cuenta="recibos-pago">recibos de pago</button>
+          <button type="button" data-seccion-cuenta="promociones-personales">promociones</button>
+          <button type="button" data-seccion-cuenta="novedades-calles-dulces">novedades</button>
+        </nav>
+      </aside>
+
+      <div class="cuenta-vistas">
+        <section class="cuenta-panel cuenta-panel-favoritos cuenta-vista" id="favoritos-usuario" aria-labelledby="titulo-favoritos-usuario">
+          <div class="tienda-seccion-titulo">
+            <span class="seccion-icono" aria-hidden="true"><i class="bi bi-stars"></i></span>
+            <div>
+              <h2 id="titulo-favoritos-usuario">mis favoritos</h2>
+              <p>Los postres que marcaste con la estrella en la tienda.</p>
+            </div>
+          </div>
+          <form id="filtros-favoritos-cuenta" class="filtros-favoritos-cuenta">
+            <label for="buscar-favorito-cuenta">buscar en mis favoritos
+              <input id="buscar-favorito-cuenta" name="busqueda" type="search" placeholder="nombre del postre...">
+            </label>
+            <label for="categoria-favorito-cuenta">categoría
+              <select id="categoria-favorito-cuenta" name="categoria">
+                <option value="">todas</option>
+                <option value="brownies">brownies</option>
+                <option value="tortas">tortas</option>
+                <option value="galletas">galletas</option>
+                <option value="postres-frios">postres fríos</option>
+                <option value="dulces">dulces</option>
+              </select>
+            </label>
+            <button type="reset" class="limpiar-filtros">limpiar</button>
+          </form>
+          <p id="estado-favoritos-cuenta" class="estado-favoritos-cuenta" aria-live="polite"></p>
+          <ul class="allproducts" id="cuenta-lista-favoritos"></ul>
+          <a class="boton ir-a-tienda" href="tienda.html">explorar la tienda <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
+        </section>
+
+        <section class="cuenta-panel cuenta-vista" id="compras-hechas" aria-labelledby="titulo-compras" hidden>
+          <span class="cuenta-panel-icono" aria-hidden="true"><i class="bi bi-bag-check-fill"></i></span>
+          <h2 id="titulo-compras">compras hechas</h2>
+          <ul id="lista-compras-cuenta" class="lista-cuenta-registros"></ul>
+          <p id="estado-compras-cuenta" class="cuenta-vacio">Cuando se confirme una compra en este navegador, aparecerá aquí.</p>
+        </section>
+        <section class="cuenta-panel cuenta-vista" id="recibos-pago" aria-labelledby="titulo-recibos" hidden>
+          <span class="cuenta-panel-icono" aria-hidden="true"><i class="bi bi-receipt"></i></span>
+          <h2 id="titulo-recibos">recibos de pago</h2>
+          <ul id="lista-recibos-cuenta" class="lista-cuenta-registros"></ul>
+          <p id="estado-recibos-cuenta" class="cuenta-vacio">Los recibos aparecen cuando el pago se aprueba; la contraentrega se registra como pedido y no como pago recibido.</p>
+        </section>
+        <section class="cuenta-panel cuenta-vista" id="promociones-personales" aria-labelledby="titulo-promociones" hidden>
+          <span class="cuenta-panel-icono" aria-hidden="true"><i class="bi bi-ticket-perforated-fill"></i></span>
+          <h2 id="titulo-promociones">promociones personales</h2>
+          <p class="cuenta-vacio">Aquí podrás consultar promociones preparadas para ti.</p>
+        </section>
+        <section class="cuenta-panel cuenta-vista" id="novedades-calles-dulces" aria-labelledby="titulo-novedades" hidden>
+          <span class="cuenta-panel-icono" aria-hidden="true"><i class="bi bi-megaphone-fill"></i></span>
+          <h2 id="titulo-novedades">novedades sobre Calles Dulces</h2>
+          <p class="cuenta-vacio">Pronto compartiremos novedades sobre nuestros productos e iniciativas.</p>
+        </section>
+      </div>
     </div>
   </main>
 

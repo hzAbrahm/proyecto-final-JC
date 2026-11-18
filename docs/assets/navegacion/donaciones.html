@@ -22,6 +22,10 @@
         <i class="bi bi-cart3" aria-hidden="true"></i>
         <span class="contador-carrito" aria-hidden="true"></span>
       </a>
+      <a class="avatar-sesion" data-avatar-sesion href="cuenta.html" aria-label="Mi perfil" title="Mi perfil" hidden>
+        <img data-avatar-imagen alt="" hidden>
+        <i class="bi bi-person-fill" data-avatar-silueta aria-hidden="true"></i>
+      </a>
       <div id="hamburguer">
         <button id="abrir" class="boton-abrir" type="button">
           <i class="bi bi-list" aria-hidden="true"></i>
@@ -77,7 +81,7 @@
         <label for="donacion-mensaje">mensaje (opcional)</label>
         <textarea id="donacion-mensaje" name="mensaje" rows="3" maxlength="300"></textarea>
         <button type="submit">continuar <i class="bi bi-heart-fill" aria-hidden="true"></i></button>
-        <p class="donacion-aviso">Esta es una demostración: todavía no se procesan pagos.</p>
+        <p class="donacion-aviso">Prototipo local: registra tu intención en este navegador, pero no procesa pagos ni envía datos.</p>
         <p class="respuesta-donacion" id="respuesta-donacion" aria-live="polite"></p>
       </form>
     </section>
@@ -93,7 +97,7 @@
         <label for="contacto-nombre">nombre</label>
         <input type="text" id="contacto-nombre" name="nombre" autocomplete="name" required>
         <label for="contacto-numero">numero</label>
-        <input type="tel" id="contacto-numero" name="numero" autocomplete="tel" required>
+        <input type="tel" id="contacto-numero" name="numero" inputmode="numeric" autocomplete="tel" pattern="[0-9]{10}" minlength="10" maxlength="10" required>
         <label for="contacto-correo">correo</label>
         <input type="email" id="contacto-correo" name="correo" autocomplete="email" required>
         <label for="contacto-mensaje">mensaje</label>

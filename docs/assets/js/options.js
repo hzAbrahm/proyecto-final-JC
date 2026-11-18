@@ -12,6 +12,67 @@ if (nav && abrir && cerrar) {
   });
 }
 
+const clavePerfilUsuarioDemo = "calles-dulces-perfil-demo-v1";
+const claveSesionUsuarioDemo = "calles-dulces-sesion-demo-v1";
+const clavePedidosDemo = "calles-dulces-pedidos-demo-v1";
+const clavePagosDemo = "calles-dulces-pagos-demo-v1";
+const claveSolicitudesDemo = "calles-dulces-solicitudes-demo-v1";
+let perfilSesionDemo = null;
+
+try {
+  const datosSesion = JSON.parse(localStorage.getItem(claveSesionUsuarioDemo) || "null");
+  if (datosSesion && datosSesion.correo) perfilSesionDemo = datosSesion;
+} catch {
+  perfilSesionDemo = null;
+}
+
+function actualizarAvataresSesion() {
+  document.querySelectorAll("[data-avatar-sesion]").forEach((enlace) => {
+    enlace.hidden = !perfilSesionDemo;
+    if (!perfilSesionDemo) return;
+
+    const imagen = enlace.querySelector("[data-avatar-imagen]");
+    const silueta = enlace.querySelector("[data-avatar-silueta]");
+    const tieneFoto = Boolean(perfilSesionDemo.foto);
+    if (imagen) {
+      imagen.hidden = !tieneFoto;
+      if (tieneFoto) imagen.src = perfilSesionDemo.foto;
+    }
+    if (silueta) silueta.hidden = tieneFoto;
+    enlace.setAttribute("aria-label", `Perfil de ${perfilSesionDemo.nombre || perfilSesionDemo.correo}`);
+    enlace.title = `Perfil de ${perfilSesionDemo.nombre || perfilSesionDemo.correo}`;
+  });
+}
+
+function leerListaDemo(clave) {
+  try {
+    const datos = JSON.parse(localStorage.getItem(clave) || "[]");
+    return Array.isArray(datos) ? datos : [];
+  } catch {
+    return [];
+  }
+}
+
+function guardarListaDemo(clave, lista) {
+  try {
+    localStorage.setItem(clave, JSON.stringify(lista));
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function guardarObjetoDemo(clave, objeto) {
+  try {
+    localStorage.setItem(clave, JSON.stringify(objeto));
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+actualizarAvataresSesion();
+
 const filtros = document.querySelector("#filtros-productos");
 const busqueda = document.querySelector("#form-busqueda");
 const formularioRecomendacion = document.querySelector("#form-recomendacion");
@@ -103,6 +164,21 @@ actualizarProductos();
 const dialogoProducto = document.querySelector("#detalle-producto");
 let posicionScrollDetalle = null;
 let productoQueAbrioDetalle = null;
+let cantidadDetalle = 1;
+
+function actualizarCantidadDetalle(cantidad) {
+  cantidadDetalle = Math.max(1, cantidad);
+  const salida = document.querySelector("#cantidad-detalle");
+  if (salida) salida.textContent = String(cantidadDetalle);
+}
+
+const controlesCantidadDetalle = document.querySelector("#controles-cantidad-detalle");
+controlesCantidadDetalle?.addEventListener("click", (evento) => {
+  const boton = evento.target.closest("button[data-accion]");
+  if (!boton) return;
+  actualizarCantidadDetalle(cantidadDetalle + (boton.dataset.accion === "sumar-detalle" ? 1 : -1));
+});
+
 const descripcionesProductos = {
   "tiramisu": {
     descripcion: "Postre cremoso en capas, con café y un toque de cacao.",
@@ -359,8 +435,14 @@ function actualizarFavoritosCuenta() {
     const precio = document.createElement("p");
     precio.className = "precio";
     precio.textContent = producto.precio;
-    imagenProducto.append(imagen, precio);
+    const botonAnadir = document.createElement("button");
+    botonAnadir.type = "button";
+    botonAnadir.className = "añadir-producto";
+    botonAnadir.textContent = "añadir al carrito";
+    imagenProducto.append(imagen, botonAnadir, precio);
     tarjeta.append(imagenProducto);
+    tarjeta.dataset.cantidadSeleccionada = "1";
+    crearControlCantidadTienda(tarjeta);
     listaFavoritosCuenta.append(tarjeta);
   });
 
@@ -383,6 +465,34 @@ if (filtrosFavoritosCuenta) {
   filtrosFavoritosCuenta.addEventListener("input", actualizarFavoritosCuenta);
   filtrosFavoritosCuenta.addEventListener("reset", () => window.setTimeout(actualizarFavoritosCuenta, 0));
 }
+
+const botonMenuCuenta = document.querySelector("#cuenta-menu-toggle");
+const menuSeccionesCuenta = document.querySelector("#cuenta-menu-secciones");
+const botonesSeccionCuenta = document.querySelectorAll("[data-seccion-cuenta]");
+const vistasCuenta = document.querySelectorAll(".cuenta-vista");
+
+if (botonMenuCuenta && menuSeccionesCuenta) {
+  botonMenuCuenta.addEventListener("click", () => {
+    menuSeccionesCuenta.hidden = !menuSeccionesCuenta.hidden;
+    botonMenuCuenta.setAttribute("aria-expanded", String(!menuSeccionesCuenta.hidden));
+  });
+}
+
+botonesSeccionCuenta.forEach((boton) => {
+  boton.addEventListener("click", () => {
+    const seccionActiva = boton.dataset.seccionCuenta;
+    vistasCuenta.forEach((vista) => {
+      vista.hidden = vista.id !== seccionActiva;
+    });
+    botonesSeccionCuenta.forEach((opcion) => {
+      if (opcion === boton) opcion.setAttribute("aria-current", "page");
+      else opcion.removeAttribute("aria-current");
+    });
+    menuSeccionesCuenta.hidden = true;
+    botonMenuCuenta.setAttribute("aria-expanded", "false");
+    document.getElementById(seccionActiva)?.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+});
 
 actualizarFavoritosCuenta();
 
@@ -411,8 +521,18 @@ const contenidoCarrito = document.querySelector("#contenido-carrito");
 const listaCarrito = document.querySelector("#productos-carrito");
 const subtotalCarrito = document.querySelector("#subtotal-carrito");
 const botonVaciarCarrito = document.querySelector("#vaciar-carrito");
+const checkoutPago = document.querySelector("#checkout-pago");
+const totalCheckout = document.querySelector("#total-checkout");
+const formularioCheckout = document.querySelector("#form-checkout");
+const panelEstadoTransaccion = document.querySelector("#estado-transaccion");
+const tituloTransaccion = document.querySelector("#titulo-transaccion");
+const detalleTransaccion = document.querySelector("#detalle-transaccion");
+const iconoTransaccion = document.querySelector("#icono-transaccion i");
+const accionesTransaccion = document.querySelector("#acciones-transaccion");
+const estadoFormularioCheckout = document.querySelector("#estado-form-checkout");
 const formatoCOP = new Intl.NumberFormat("es-CO", { style: "currency", currency: "COP", maximumFractionDigits: 0 });
 let carrito = [];
+let pagoActualDemo = null;
 
 try {
   const productosGuardados = JSON.parse(localStorage.getItem(claveCarrito) || "[]");
@@ -431,6 +551,12 @@ try {
   }
 } catch {
   carrito = [];
+}
+
+try {
+  pagoActualDemo = JSON.parse(localStorage.getItem("calles-dulces-pago-actual-demo-v1") || "null");
+} catch {
+  pagoActualDemo = null;
 }
 
 function guardarCarrito() {
@@ -509,6 +635,7 @@ function crearElementoCarrito(producto) {
 
 function actualizarVistaCarrito() {
   actualizarContadorCarrito();
+  if (checkoutPago) checkoutPago.hidden = carrito.length === 0;
   if (!listaCarrito || !estadoCarrito || !contenidoCarrito) return;
 
   listaCarrito.replaceChildren(...carrito.map(crearElementoCarrito));
@@ -516,6 +643,7 @@ function actualizarVistaCarrito() {
   if (!carrito.length) {
     carritoVacio.hidden = false;
     resumenCarrito.hidden = true;
+    renderizarEstadoTransaccionDemo(pagoActualDemo);
     return;
   }
 
@@ -526,6 +654,269 @@ function actualizarVistaCarrito() {
   subtotalCarrito.textContent = formatoCOP.format(
     carrito.reduce((total, producto) => total + producto.valor * producto.cantidad, 0)
   );
+  if (totalCheckout) totalCheckout.textContent = subtotalCarrito.textContent;
+  renderizarEstadoTransaccionDemo(pagoActualDemo);
+}
+
+const nombresMetodosPago = {
+  pse: "PSE",
+  nequi: "Nequi",
+  daviplata: "Daviplata",
+  tarjeta: "Tarjeta Visa/Mastercard",
+  "bre-b": "Bre-B",
+  contraentrega: "Pago contraentrega"
+};
+
+function guardarPagoActualDemo() {
+  try {
+    localStorage.setItem("calles-dulces-pago-actual-demo-v1", JSON.stringify(pagoActualDemo));
+  } catch {
+    // El estado sigue visible durante esta visita aunque no se pueda guardar en el navegador.
+  }
+}
+
+function registrarEstadoPagoDemo(pago) {
+  if (!pago) return;
+  const historial = leerListaDemo(clavePagosDemo);
+  const resumen = {
+    id: pago.id,
+    metodo: pago.metodo,
+    monto: pago.monto,
+    estado: pago.estado,
+    fecha: new Date().toISOString()
+  };
+  const indice = historial.findIndex((registro) => registro.id === pago.id);
+  if (indice >= 0) historial[indice] = resumen;
+  else historial.unshift(resumen);
+  guardarListaDemo(clavePagosDemo, historial);
+}
+
+function renderizarEstadoTransaccionDemo(pago) {
+  if (!panelEstadoTransaccion) return;
+  panelEstadoTransaccion.hidden = !pago;
+  if (!pago) return;
+
+  const etiquetas = {
+    pendiente: ["pago pendiente de verificar", "La orden aún no está confirmada. Revisa la respuesta de prueba de la pasarela.", "bi-hourglass-split"],
+    aprobado: ["pago aprobado · pedido confirmado", "El pago de prueba fue aprobado y el pedido quedó registrado.", "bi-check-circle-fill"],
+    rechazado: ["pago rechazado", "El pedido no se confirmó y los productos siguen en tu carrito.", "bi-x-circle-fill"],
+    cancelado: ["pago cancelado", "El pedido no se confirmó y los productos siguen en tu carrito.", "bi-slash-circle"],
+    contraentrega: ["pedido confirmado · contraentrega registrada", "La modalidad contraentrega quedó registrada para este pedido de demostración.", "bi-truck"]
+  };
+  const [titulo, detalle, icono] = etiquetas[pago.estado] || etiquetas.pendiente;
+  if (tituloTransaccion) tituloTransaccion.textContent = titulo;
+  if (detalleTransaccion) {
+    detalleTransaccion.textContent = `${nombresMetodosPago[pago.metodo] || pago.metodo} · ${formatoCOP.format(pago.monto)}. ${detalle}`;
+  }
+  if (iconoTransaccion) iconoTransaccion.className = `bi ${icono}`;
+  panelEstadoTransaccion.className = `estado-transaccion estado-transaccion-${pago.estado}`;
+  if (accionesTransaccion) accionesTransaccion.hidden = pago.estado !== "pendiente";
+}
+
+function validarNumeroLuhn(numero) {
+  let suma = 0;
+  let duplicar = false;
+  for (let indice = numero.length - 1; indice >= 0; indice -= 1) {
+    let digito = Number(numero[indice]);
+    if (duplicar) {
+      digito *= 2;
+      if (digito > 9) digito -= 9;
+    }
+    suma += digito;
+    duplicar = !duplicar;
+  }
+  return numero.length === 16 && suma % 10 === 0;
+}
+
+function validarDatosMetodoPago() {
+  if (!formularioCheckout) return true;
+  const metodo = formularioCheckout.querySelector('input[name="metodo-pago"]:checked')?.value;
+  if (metodo !== "tarjeta") return true;
+
+  const numero = formularioCheckout.elements["numero-tarjeta"];
+  const franquicia = formularioCheckout.elements.franquicia.value;
+  const digitos = numero.value.replace(/\D/g, "");
+  const esVisa = digitos.startsWith("4");
+  const prefijoMastercard = Number(digitos.slice(0, 2));
+  const rangoMastercard = Number(digitos.slice(0, 4));
+  const esMastercard = (prefijoMastercard >= 51 && prefijoMastercard <= 55)
+    || (rangoMastercard >= 2221 && rangoMastercard <= 2720);
+
+  numero.setCustomValidity("");
+  if (!validarNumeroLuhn(digitos)) {
+    numero.setCustomValidity("Escribe un número de tarjeta de prueba válido de 16 dígitos.");
+  } else if ((franquicia === "Visa" && !esVisa) || (franquicia === "Mastercard" && !esMastercard)) {
+    numero.setCustomValidity("El número no coincide con la franquicia seleccionada.");
+  }
+
+  const vencimiento = formularioCheckout.elements["vencimiento-tarjeta"];
+  vencimiento.setCustomValidity("");
+  if (vencimiento.value) {
+    const [anio, mes] = vencimiento.value.split("-").map(Number);
+    const hoy = new Date();
+    if (anio < hoy.getFullYear() || (anio === hoy.getFullYear() && mes < hoy.getMonth() + 1)) {
+      vencimiento.setCustomValidity("La tarjeta de prueba no puede estar vencida.");
+    }
+  }
+  return formularioCheckout.reportValidity();
+}
+
+function crearIdDemo(prefijo) {
+  const aleatorio = globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+  return `${prefijo}-${aleatorio}`;
+}
+
+function registrarSolicitudDemo(tipo, datos) {
+  const solicitudes = leerListaDemo(claveSolicitudesDemo);
+  solicitudes.unshift({
+    id: crearIdDemo("CDS"),
+    tipo,
+    fecha: new Date().toISOString(),
+    ...datos
+  });
+  return guardarListaDemo(claveSolicitudesDemo, solicitudes);
+}
+
+function confirmarPedidoDemo(pago, modalidad) {
+  const datos = pago.pedido;
+  const pedido = {
+    id: pago.id,
+    recibo: `CD-${pago.id.slice(-8).toUpperCase()}`,
+    nombre: datos.nombre,
+    correo: datos.correo,
+    telefono: datos.telefono,
+    ciudad: datos.ciudad,
+    direccion: datos.direccion,
+    productos: datos.productos,
+    total: pago.monto,
+    metodo: nombresMetodosPago[pago.metodo] || pago.metodo,
+    estado: modalidad === "contraentrega" ? "contraentrega registrada" : "confirmado",
+    fecha: new Date().toISOString()
+  };
+  const pedidos = leerListaDemo(clavePedidosDemo);
+  if (!pedidos.some((existente) => existente.id === pedido.id)) pedidos.unshift(pedido);
+  guardarListaDemo(clavePedidosDemo, pedidos);
+
+  pago.estado = modalidad === "contraentrega" ? "contraentrega" : "aprobado";
+  pago.pedidoConfirmado = true;
+  pago.fechaActualizacion = new Date().toISOString();
+  pagoActualDemo = pago;
+  guardarPagoActualDemo();
+  registrarEstadoPagoDemo(pago);
+
+  carrito = [];
+  guardarCarrito();
+  restablecerCheckoutDemo();
+  actualizarVistaCarrito();
+  actualizarRegistrosCuentaDemo();
+}
+
+function iniciarPagoDemo(evento) {
+  evento.preventDefault();
+  if (!formularioCheckout || !carrito.length) return;
+  if (!validarDatosMetodoPago() || !formularioCheckout.reportValidity()) return;
+
+  const datos = new FormData(formularioCheckout);
+  const metodo = datos.get("metodo-pago");
+  const monto = carrito.reduce((total, producto) => total + producto.valor * producto.cantidad, 0);
+  const pago = {
+    id: crearIdDemo("CDP"),
+    metodo,
+    monto,
+    estado: metodo === "contraentrega" ? "contraentrega" : "pendiente",
+    fechaCreacion: new Date().toISOString(),
+    pedido: {
+      nombre: String(datos.get("nombre")).trim(),
+      correo: String(datos.get("correo")).trim().toLowerCase(),
+      telefono: String(datos.get("telefono")).trim(),
+      ciudad: String(datos.get("ciudad")),
+      direccion: String(datos.get("direccion")).trim(),
+      productos: carrito.map((producto) => ({
+        id: producto.id,
+        titulo: producto.titulo,
+        cantidad: producto.cantidad,
+        valorUnitario: producto.valor
+      }))
+    }
+  };
+
+  if (estadoFormularioCheckout) estadoFormularioCheckout.textContent = "";
+  if (metodo === "contraentrega") {
+    confirmarPedidoDemo(pago, "contraentrega");
+    return;
+  }
+
+  pagoActualDemo = pago;
+  guardarPagoActualDemo();
+  registrarEstadoPagoDemo(pago);
+  renderizarEstadoTransaccionDemo(pago);
+  if (estadoFormularioCheckout) {
+    estadoFormularioCheckout.textContent = "Transacción de prueba iniciada. El pedido seguirá pendiente hasta recibir una aprobación.";
+  }
+}
+
+function actualizarResultadoPagoDemo(estado) {
+  if (!pagoActualDemo || pagoActualDemo.estado !== "pendiente") return;
+  if (!['aprobado', 'rechazado', 'cancelado'].includes(estado)) return;
+
+  pagoActualDemo.estado = estado;
+  pagoActualDemo.fechaActualizacion = new Date().toISOString();
+  if (estado === "aprobado") {
+    confirmarPedidoDemo(pagoActualDemo, "aprobado");
+    return;
+  }
+
+  guardarPagoActualDemo();
+  registrarEstadoPagoDemo(pagoActualDemo);
+  renderizarEstadoTransaccionDemo(pagoActualDemo);
+}
+
+function reiniciarPagoAlCambiarCarrito() {
+  if (!pagoActualDemo) return;
+  if (pagoActualDemo.estado === "pendiente") {
+    pagoActualDemo.estado = "cancelado";
+    pagoActualDemo.fechaActualizacion = new Date().toISOString();
+    registrarEstadoPagoDemo(pagoActualDemo);
+  } else {
+    pagoActualDemo = null;
+  }
+  guardarPagoActualDemo();
+  renderizarEstadoTransaccionDemo(pagoActualDemo);
+}
+
+const panelesMetodoPago = document.querySelectorAll("[data-metodo-pago]");
+const opcionesMetodoPago = formularioCheckout?.querySelectorAll('input[name="metodo-pago"]') || [];
+function cambiarMetodoPago(metodo) {
+  panelesMetodoPago.forEach((panel) => {
+    const activo = panel.dataset.metodoPago === metodo;
+    panel.hidden = !activo;
+    panel.querySelectorAll("input, select, textarea").forEach((campo) => {
+      campo.disabled = !activo;
+    });
+  });
+}
+
+function restablecerCheckoutDemo() {
+  if (!formularioCheckout) return;
+  formularioCheckout.reset();
+  cambiarMetodoPago("");
+  if (perfilSesionDemo) {
+    formularioCheckout.elements.nombre.value = perfilSesionDemo.nombre || "";
+    formularioCheckout.elements.correo.value = perfilSesionDemo.correo || "";
+  }
+}
+
+opcionesMetodoPago.forEach((opcion) => {
+  opcion.addEventListener("change", () => cambiarMetodoPago(opcion.value));
+});
+formularioCheckout?.addEventListener("submit", iniciarPagoDemo);
+panelEstadoTransaccion?.addEventListener("click", (evento) => {
+  const boton = evento.target.closest("[data-resultado-pago]");
+  if (boton) actualizarResultadoPagoDemo(boton.dataset.resultadoPago);
+});
+if (formularioCheckout && perfilSesionDemo) {
+  formularioCheckout.elements.nombre.value = perfilSesionDemo.nombre || "";
+  formularioCheckout.elements.correo.value = perfilSesionDemo.correo || "";
 }
 
 function agregarProductoAlCarrito(producto, boton, cantidad = 1) {
@@ -533,6 +924,7 @@ function agregarProductoAlCarrito(producto, boton, cantidad = 1) {
   if (!id) return;
 
   const cantidadSolicitada = Math.max(1, Number.parseInt(cantidad, 10) || 1);
+  reiniciarPagoAlCambiarCarrito();
 
   const imagen = producto.querySelector("img");
   const precio = producto.querySelector(".precio")?.textContent.trim() || "";
@@ -574,6 +966,7 @@ if (listaCarrito) {
 
     const producto = carrito.find((item) => item.id === tarjeta.dataset.id);
     if (!producto) return;
+    reiniciarPagoAlCambiarCarrito();
     if (boton.dataset.accion === "sumar") producto.cantidad += 1;
     if (boton.dataset.accion === "restar") producto.cantidad -= 1;
     if (boton.dataset.accion === "quitar" || producto.cantidad <= 0) {
@@ -581,13 +974,16 @@ if (listaCarrito) {
     }
 
     guardarCarrito();
+    if (!carrito.length) restablecerCheckoutDemo();
     actualizarVistaCarrito();
   });
 }
 
 botonVaciarCarrito?.addEventListener("click", () => {
+  reiniciarPagoAlCambiarCarrito();
   carrito = [];
   guardarCarrito();
+  restablecerCheckoutDemo();
   actualizarVistaCarrito();
 });
 
@@ -612,6 +1008,7 @@ function abrirDescripcion(producto) {
   document.querySelector("#detalle-ingredientes").textContent = detalle.ingredientes;
   document.querySelector("#detalle-peso").textContent = detalle.peso;
   document.querySelector("#detalle-precio").textContent = producto.querySelector(".precio")?.textContent || "";
+  actualizarCantidadDetalle(1);
 
   if (!dialogoProducto.open) {
     posicionScrollDetalle = { x: window.scrollX, y: window.scrollY };
@@ -714,7 +1111,10 @@ listasTienda.forEach((lista) => {
 
 const botonAnadirDetalle = document.querySelector("#detalle-añadir-carrito");
 botonAnadirDetalle?.addEventListener("click", () => {
-  if (productoQueAbrioDetalle) agregarProductoAlCarrito(productoQueAbrioDetalle, botonAnadirDetalle);
+  if (productoQueAbrioDetalle) {
+    agregarProductoAlCarrito(productoQueAbrioDetalle, botonAnadirDetalle, cantidadDetalle);
+    actualizarCantidadDetalle(1);
+  }
 });
 
 actualizarEstrellas();
@@ -757,7 +1157,11 @@ if (contactoToggle && formularioContacto && seccionContacto) {
   formularioContacto.addEventListener("submit", (evento) => {
     evento.preventDefault();
     const respuesta = formularioContacto.querySelector(".contacto-respuesta");
-    respuesta.textContent = "Gracias por escribirnos. Pronto nos pondremos en contacto contigo.";
+    const datos = Object.fromEntries(new FormData(formularioContacto).entries());
+    const registrado = registrarSolicitudDemo("contacto", datos);
+    respuesta.textContent = registrado
+      ? "Gracias por escribirnos. Tu solicitud quedó guardada en este navegador."
+      : "Gracias por escribirnos. No se pudo guardar la solicitud en este navegador.";
     formularioContacto.reset();
   });
 }
@@ -788,7 +1192,10 @@ if (formularioRecomendacion) {
     }
 
     respuesta.classList.remove("respuesta-error");
-    respuesta.textContent = "¡Gracias! Tu sugerencia pasó el filtro. El envío se habilitará al conectar el sistema.";
+    const registrada = registrarSolicitudDemo("sugerencia", { producto: campo.value.trim() });
+    respuesta.textContent = registrada
+      ? "¡Gracias! La sugerencia pasó el filtro y quedó guardada en este navegador."
+      : "La sugerencia pasó el filtro, pero no se pudo guardar en este navegador.";
     formularioRecomendacion.reset();
   });
 }
@@ -799,10 +1206,403 @@ if (formularioDonacion) {
     evento.preventDefault();
     const nombre = formularioDonacion.elements.nombre.value.trim();
     const respuesta = document.querySelector("#respuesta-donacion");
-    respuesta.textContent = `Gracias, ${nombre}, por querer apoyar esta causa. Esta demostración todavía no procesa pagos.`;
+    const datos = Object.fromEntries(new FormData(formularioDonacion).entries());
+    const registrada = registrarSolicitudDemo("donacion", datos);
+    respuesta.textContent = registrada
+      ? `Gracias, ${nombre}, por querer apoyar esta causa. Tu intención quedó guardada localmente; no se realizó ningún cobro.`
+      : `Gracias, ${nombre}. No se pudo guardar la intención y no se realizó ningún cobro.`;
     formularioDonacion.reset();
   });
 }
+
+const formularioCuentaAcceso = document.querySelector("#form-cuenta-acceso");
+const botonesModoCuenta = document.querySelectorAll("[data-modo-cuenta]");
+const seccionSesionCuenta = document.querySelector("#cuenta-sesion-activa");
+const textoSaludoCuenta = document.querySelector("#saludo-cuenta");
+const estadoCuentaAcceso = document.querySelector("#estado-cuenta-acceso");
+const etiquetaNombreCuenta = document.querySelector("#campo-nombre-cuenta");
+const etiquetaConfirmarCuenta = document.querySelector("#campo-confirmar-cuenta");
+const etiquetaFotoCuenta = document.querySelector("#campo-foto-cuenta");
+const imagenAvatarCuenta = document.querySelector("#cuenta-avatar-imagen");
+const siluetaAvatarCuenta = document.querySelector("#cuenta-avatar-silueta");
+const tituloAccesoCuenta = document.querySelector("#titulo-acceso-cuenta");
+let modoCuentaDemo = "registro";
+
+function cambiarModoAccesoCuenta(modo) {
+  modoCuentaDemo = modo;
+  const esRegistro = modo === "registro";
+  if (!formularioCuentaAcceso) return;
+
+  const campoNombre = formularioCuentaAcceso.elements.nombre;
+  const campoContrasena = formularioCuentaAcceso.elements.contrasena;
+  const campoConfirmar = formularioCuentaAcceso.elements.confirmar;
+  const campoFoto = formularioCuentaAcceso.elements.foto;
+  etiquetaNombreCuenta.hidden = !esRegistro;
+  etiquetaConfirmarCuenta.hidden = !esRegistro;
+  etiquetaFotoCuenta.hidden = !esRegistro;
+  campoNombre.disabled = !esRegistro;
+  campoNombre.required = esRegistro;
+  campoConfirmar.disabled = !esRegistro;
+  campoConfirmar.required = esRegistro;
+  campoFoto.disabled = !esRegistro;
+  campoContrasena.autocomplete = esRegistro ? "new-password" : "current-password";
+  formularioCuentaAcceso.querySelector("#enviar-cuenta-acceso").textContent = esRegistro ? "crear cuenta" : "iniciar sesión";
+  botonesModoCuenta.forEach((boton) => {
+    boton.setAttribute("aria-pressed", String(boton.dataset.modoCuenta === modo));
+  });
+  if (estadoCuentaAcceso) estadoCuentaAcceso.textContent = "";
+}
+
+async function convertirFotoPerfil(file) {
+  if (!file) return "";
+  if (!file.type.startsWith("image/")) throw new Error("El archivo seleccionado no es una imagen.");
+  if (file.size > 5 * 1024 * 1024) throw new Error("La imagen debe pesar menos de 5 MB.");
+
+  const dataUrl = await new Promise((resolve, reject) => {
+    const lector = new FileReader();
+    lector.onload = () => resolve(lector.result);
+    lector.onerror = () => reject(new Error("No se pudo leer la imagen."));
+    lector.readAsDataURL(file);
+  });
+
+  return new Promise((resolve, reject) => {
+    const imagen = new Image();
+    imagen.onload = () => {
+      try {
+        const maximo = 240;
+        const escala = Math.min(maximo / imagen.width, maximo / imagen.height, 1);
+        const lienzo = document.createElement("canvas");
+        lienzo.width = Math.max(1, Math.round(imagen.width * escala));
+        lienzo.height = Math.max(1, Math.round(imagen.height * escala));
+        lienzo.getContext("2d").drawImage(imagen, 0, 0, lienzo.width, lienzo.height);
+        resolve(lienzo.toDataURL("image/jpeg", 0.82));
+      } catch {
+        reject(new Error("No se pudo preparar la foto de perfil."));
+      }
+    };
+    imagen.onerror = () => reject(new Error("El archivo no se pudo abrir como imagen."));
+    imagen.src = dataUrl;
+  });
+}
+
+function actualizarVistaSesionCuenta() {
+  if (formularioCuentaAcceso) formularioCuentaAcceso.hidden = Boolean(perfilSesionDemo);
+  if (seccionSesionCuenta) seccionSesionCuenta.hidden = !perfilSesionDemo;
+  if (textoSaludoCuenta && perfilSesionDemo) {
+    textoSaludoCuenta.textContent = `Hola, ${perfilSesionDemo.nombre || perfilSesionDemo.correo}. Tu sesión de demostración está activa.`;
+  }
+  const foto = perfilSesionDemo?.foto || "";
+  if (imagenAvatarCuenta) {
+    imagenAvatarCuenta.hidden = !foto;
+    if (foto) imagenAvatarCuenta.src = foto;
+  }
+  if (siluetaAvatarCuenta) siluetaAvatarCuenta.hidden = Boolean(foto);
+  if (tituloAccesoCuenta) {
+    tituloAccesoCuenta.textContent = perfilSesionDemo
+      ? `Hola, ${perfilSesionDemo.nombre || "bienvenido"}`
+      : "Accede a tu cuenta";
+  }
+  actualizarAvataresSesion();
+  actualizarRegistrosCuentaDemo();
+}
+
+botonesModoCuenta.forEach((boton) => {
+  boton.addEventListener("click", () => cambiarModoAccesoCuenta(boton.dataset.modoCuenta));
+});
+
+if (formularioCuentaAcceso) {
+  cambiarModoAccesoCuenta("registro");
+  formularioCuentaAcceso.addEventListener("submit", async (evento) => {
+    evento.preventDefault();
+    const nombre = formularioCuentaAcceso.elements.nombre.value.trim();
+    const correo = formularioCuentaAcceso.elements.correo.value.trim().toLowerCase();
+    const contrasena = formularioCuentaAcceso.elements.contrasena.value;
+    const confirmacion = formularioCuentaAcceso.elements.confirmar;
+
+    confirmacion.setCustomValidity(modoCuentaDemo === "registro" && contrasena !== confirmacion.value
+      ? "Las contraseñas no coinciden."
+      : "");
+    if (!formularioCuentaAcceso.reportValidity()) return;
+
+    let perfilGuardado = null;
+    try {
+      perfilGuardado = JSON.parse(localStorage.getItem(clavePerfilUsuarioDemo) || "null");
+    } catch {
+      perfilGuardado = null;
+    }
+
+    try {
+      const fotoArchivo = modoCuentaDemo === "registro" ? formularioCuentaAcceso.elements.foto.files?.[0] : null;
+      const fotoNueva = fotoArchivo ? await convertirFotoPerfil(fotoArchivo) : "";
+      const perfil = modoCuentaDemo === "registro"
+        ? { nombre, correo, foto: fotoNueva }
+        : perfilGuardado?.correo === correo
+          ? perfilGuardado
+          : { nombre: correo.split("@")[0], correo, foto: "" };
+
+      if (modoCuentaDemo === "registro") guardarObjetoDemo(clavePerfilUsuarioDemo, perfil);
+      perfilSesionDemo = perfil;
+      const guardada = guardarObjetoDemo(claveSesionUsuarioDemo, perfilSesionDemo);
+      formularioCuentaAcceso.reset();
+      actualizarVistaSesionCuenta();
+      if (estadoCuentaAcceso) {
+        estadoCuentaAcceso.textContent = guardada
+          ? "Sesión de demostración iniciada en este navegador."
+          : "Sesión iniciada en esta página; el navegador no permitió guardarla.";
+      }
+    } catch (error) {
+      if (estadoCuentaAcceso) estadoCuentaAcceso.textContent = error.message;
+    }
+  });
+}
+
+document.querySelector("#cerrar-sesion")?.addEventListener("click", () => {
+  perfilSesionDemo = null;
+  try {
+    localStorage.removeItem(claveSesionUsuarioDemo);
+  } catch {
+    // El control de cierre también actualiza la vista durante esta visita.
+  }
+  actualizarVistaSesionCuenta();
+  cambiarModoAccesoCuenta("ingreso");
+  if (estadoCuentaAcceso) estadoCuentaAcceso.textContent = "Sesión cerrada en este navegador.";
+});
+
+function actualizarRegistrosCuentaDemo() {
+  const listaCompras = document.querySelector("#lista-compras-cuenta");
+  const listaRecibos = document.querySelector("#lista-recibos-cuenta");
+  if (!listaCompras || !listaRecibos) return;
+
+  const correoActivo = perfilSesionDemo?.correo?.toLowerCase();
+  const pedidos = correoActivo
+    ? leerListaDemo(clavePedidosDemo).filter((pedido) => pedido.correo?.toLowerCase() === correoActivo)
+    : [];
+  const estadoCompras = document.querySelector("#estado-compras-cuenta");
+  const estadoRecibos = document.querySelector("#estado-recibos-cuenta");
+  listaCompras.replaceChildren();
+  listaRecibos.replaceChildren();
+
+  pedidos.forEach((pedido) => {
+    const compra = document.createElement("li");
+    compra.className = "registro-cuenta";
+    const nombre = document.createElement("strong");
+    nombre.textContent = `Pedido ${pedido.recibo}`;
+    const detalle = document.createElement("p");
+    const fecha = new Date(pedido.fecha).toLocaleDateString("es-CO");
+    detalle.textContent = `${fecha} · ${pedido.productos.reduce((suma, producto) => suma + producto.cantidad, 0)} unidades · ${formatoCOP.format(pedido.total)} · ${pedido.estado}`;
+    compra.append(nombre, detalle);
+    listaCompras.append(compra);
+  });
+
+  const pedidosPagados = pedidos.filter((pedido) => pedido.estado === "confirmado");
+  pedidosPagados.forEach((pedido) => {
+    const recibo = document.createElement("li");
+    recibo.className = "registro-cuenta";
+    const numero = document.createElement("strong");
+    numero.textContent = `Recibo ${pedido.recibo}`;
+    const medio = document.createElement("p");
+    const fecha = new Date(pedido.fecha).toLocaleDateString("es-CO");
+    medio.textContent = `${pedido.metodo} · ${formatoCOP.format(pedido.total)} · ${fecha}`;
+    recibo.append(numero, medio);
+    listaRecibos.append(recibo);
+  });
+
+  if (estadoCompras) estadoCompras.hidden = pedidos.length > 0;
+  if (estadoRecibos) estadoRecibos.hidden = pedidosPagados.length > 0;
+}
+
+actualizarVistaSesionCuenta();
+
+const formularioAdminAcceso = document.querySelector("#form-admin-acceso");
+const seccionAdminAcceso = document.querySelector("#admin-acceso");
+const panelAdmin = document.querySelector("#panel-admin");
+const formularioProductoAdmin = document.querySelector("#form-admin-producto");
+const estadoProductoAdmin = document.querySelector("#estado-producto-admin");
+const listaProductosAdminDB = document.querySelector("#admin-lista-productos-db");
+const estadoSinProductosAdminDB = document.querySelector("#admin-sin-productos-db");
+const totalProductosAdmin = document.querySelector("#admin-total-productos");
+const claveSesionAdminDemo = "calles-dulces-admin-demo-sesion-v1";
+
+function crearRegistroProductoAdmin(producto) {
+  const item = document.createElement("li");
+  item.className = "admin-registro";
+
+  const titulo = document.createElement("strong");
+  titulo.textContent = `${producto.name} · ${formatoCOP.format(producto.priceCOP)}`;
+
+  const detalle = document.createElement("p");
+  const peso = producto.weightGrams ? ` · ${producto.weightGrams} g` : "";
+  detalle.textContent = `${producto.category}${peso} · guardado en Atlas`;
+  item.append(titulo, detalle);
+  return item;
+}
+
+async function cargarProductosAtlasAdmin(mostrarEstado = true) {
+  if (!listaProductosAdminDB) return;
+
+  try {
+    const respuesta = await fetch("/api/products", { headers: { Accept: "application/json" } });
+    const resultado = await respuesta.json();
+    if (!respuesta.ok) throw new Error(resultado.error || "No se pudo consultar Atlas.");
+
+    const items = Array.isArray(resultado.items) ? resultado.items : [];
+    totalProductosAdmin.textContent = String(items.length);
+    listaProductosAdminDB.replaceChildren(...items.map(crearRegistroProductoAdmin));
+    estadoSinProductosAdminDB.hidden = items.length > 0;
+    if (mostrarEstado && estadoProductoAdmin) {
+      estadoProductoAdmin.textContent = `Atlas respondió: ${items.length} producto${items.length === 1 ? "" : "s"} activo${items.length === 1 ? "" : "s"}.`;
+    }
+    return items;
+  } catch {
+    totalProductosAdmin.textContent = "—";
+    listaProductosAdminDB.replaceChildren();
+    estadoSinProductosAdminDB.hidden = false;
+    if (estadoProductoAdmin) {
+      estadoProductoAdmin.textContent = "No se pudo leer el catálogo de Atlas. Revisa que el servidor esté iniciado con npm start.";
+    }
+    return null;
+  }
+}
+
+function renderizarPanelAdminDemo() {
+  if (!panelAdmin) return;
+  let sesionActiva = false;
+  try {
+    sesionActiva = sessionStorage.getItem(claveSesionAdminDemo) === "activa";
+  } catch {
+    sesionActiva = false;
+  }
+  panelAdmin.hidden = !sesionActiva;
+  if (seccionAdminAcceso) seccionAdminAcceso.hidden = sesionActiva;
+  if (!sesionActiva) return;
+
+  const pedidos = leerListaDemo(clavePedidosDemo);
+  const pagos = leerListaDemo(clavePagosDemo);
+  const solicitudes = leerListaDemo(claveSolicitudesDemo);
+  cargarProductosAtlasAdmin();
+  document.querySelector("#admin-total-pedidos").textContent = String(pedidos.length);
+  document.querySelector("#admin-total-solicitudes").textContent = String(solicitudes.length);
+
+  const listaPedidosAdmin = document.querySelector("#admin-lista-pedidos");
+  listaPedidosAdmin.replaceChildren();
+  document.querySelector("#admin-sin-pedidos").hidden = pedidos.length > 0;
+  pedidos.forEach((pedido) => {
+    const item = document.createElement("li");
+    item.className = "admin-registro";
+    const titulo = document.createElement("strong");
+    titulo.textContent = `${pedido.recibo} · ${pedido.nombre}`;
+    const detalle = document.createElement("p");
+    detalle.textContent = `${pedido.metodo} · ${formatoCOP.format(pedido.total)} · ${pedido.estado}`;
+    const etiquetaEstado = document.createElement("label");
+    etiquetaEstado.textContent = "estado de preparación";
+    const selector = document.createElement("select");
+    selector.dataset.pedidoAdmin = pedido.id;
+    ["confirmado", "preparando", "listo para entregar", "en camino", "entregado"].forEach((estado) => {
+      const opcion = document.createElement("option");
+      opcion.value = estado;
+      opcion.textContent = estado;
+      opcion.selected = (pedido.estadoEntrega || "confirmado") === estado;
+      selector.append(opcion);
+    });
+    etiquetaEstado.append(selector);
+    item.append(titulo, detalle, etiquetaEstado);
+    listaPedidosAdmin.append(item);
+  });
+
+  const listaPagosAdmin = document.querySelector("#admin-lista-pagos");
+  listaPagosAdmin.replaceChildren();
+  document.querySelector("#admin-sin-pagos").hidden = pagos.length > 0;
+  pagos.forEach((pago) => {
+    const item = document.createElement("li");
+    item.className = "admin-registro";
+    const titulo = document.createElement("strong");
+    titulo.textContent = `${nombresMetodosPago[pago.metodo] || pago.metodo} · ${pago.estado}`;
+    const detalle = document.createElement("p");
+    detalle.textContent = `${formatoCOP.format(pago.monto)} · ${new Date(pago.fecha).toLocaleString("es-CO")}`;
+    item.append(titulo, detalle);
+    listaPagosAdmin.append(item);
+  });
+
+  const listaSolicitudesAdmin = document.querySelector("#admin-lista-solicitudes");
+  listaSolicitudesAdmin.replaceChildren();
+  document.querySelector("#admin-sin-solicitudes").hidden = solicitudes.length > 0;
+  solicitudes.forEach((solicitud) => {
+    const item = document.createElement("li");
+    item.className = "admin-registro";
+    const titulo = document.createElement("strong");
+    titulo.textContent = `${solicitud.tipo} · ${solicitud.nombre || solicitud.correo || "sin nombre"}`;
+    const detalle = document.createElement("p");
+    const resumen = Object.entries(solicitud)
+      .filter(([clave]) => !["id", "tipo", "fecha"].includes(clave))
+      .map(([clave, valor]) => `${clave}: ${valor}`)
+      .join(" · ");
+    detalle.textContent = `${new Date(solicitud.fecha).toLocaleString("es-CO")} · ${resumen}`;
+    item.append(titulo, detalle);
+    listaSolicitudesAdmin.append(item);
+  });
+}
+
+formularioProductoAdmin?.addEventListener("submit", async (evento) => {
+  evento.preventDefault();
+  if (!formularioProductoAdmin.reportValidity()) return;
+
+  const datos = Object.fromEntries(new FormData(formularioProductoAdmin).entries());
+  datos.priceCOP = Number(datos.priceCOP);
+  datos.weightGrams = datos.weightGrams ? Number(datos.weightGrams) : null;
+  if (estadoProductoAdmin) estadoProductoAdmin.textContent = "Enviando el producto al servidor...";
+
+  try {
+    const respuesta = await fetch("/api/dev/products", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Accept: "application/json" },
+      body: JSON.stringify(datos)
+    });
+    const resultado = await respuesta.json();
+    if (!respuesta.ok) throw new Error(resultado.error || "El servidor rechazó el producto.");
+
+    formularioProductoAdmin.reset();
+    await cargarProductosAtlasAdmin(false);
+    if (estadoProductoAdmin) {
+      estadoProductoAdmin.textContent = `Guardado en Atlas: ${resultado.item.name} (id ${resultado.item._id}).`;
+    }
+  } catch (error) {
+    if (estadoProductoAdmin) estadoProductoAdmin.textContent = error.message;
+  }
+});
+
+formularioAdminAcceso?.addEventListener("submit", (evento) => {
+  evento.preventDefault();
+  if (!formularioAdminAcceso.reportValidity()) return;
+  try {
+    sessionStorage.setItem(claveSesionAdminDemo, "activa");
+  } catch {
+    document.querySelector("#estado-admin-acceso").textContent = "El navegador bloqueó la sesión de prueba.";
+    return;
+  }
+  renderizarPanelAdminDemo();
+});
+
+document.querySelector("#cerrar-admin")?.addEventListener("click", () => {
+  try {
+    sessionStorage.removeItem(claveSesionAdminDemo);
+  } catch {
+    // La página vuelve al formulario aunque el almacenamiento de sesión no esté disponible.
+  }
+  renderizarPanelAdminDemo();
+});
+
+document.querySelector("#admin-lista-pedidos")?.addEventListener("change", (evento) => {
+  const selector = evento.target.closest("select[data-pedido-admin]");
+  if (!selector) return;
+  const pedidos = leerListaDemo(clavePedidosDemo);
+  const pedido = pedidos.find((item) => item.id === selector.dataset.pedidoAdmin);
+  if (!pedido) return;
+  pedido.estadoEntrega = selector.value;
+  guardarListaDemo(clavePedidosDemo, pedidos);
+  renderizarPanelAdminDemo();
+});
+
+renderizarPanelAdminDemo();
 
 const botonChatbot = document.querySelector("#chatbot-abrir");
 const cerrarChatbot = document.querySelector("#chatbot-cerrar");

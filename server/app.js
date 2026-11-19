@@ -79,7 +79,10 @@ app.post("/api/dev/products", allowLocalDevelopmentWrites, async (request, respo
       imageUrl
     });
     response.status(201).json({ item });
-  } catch (error) {
+  } catch (error) { 
+     console.error("ERROR REAL AL GUARDAR:", error);
+
+     
     if (error.code === 11000) {
       return response.status(409).json({ error: "Ya existe un producto con ese nombre." });
     }

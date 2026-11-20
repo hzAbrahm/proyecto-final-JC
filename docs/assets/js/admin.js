@@ -182,33 +182,52 @@ async function cargarSolicitudesAtlasAdmin() {
   if (!listaSolicitudesAdmin) return;
 
   try {
-    const respuesta = await fetchConAuth("/api/admin/helprequests");
-    const resultado = await respuesta.json();
-    if (!respuesta.ok) throw new Error(resultado.error || "No se pudieron obtener las solicitudes.");
+    const [respuestaContactos, respuestaSugerencias] = await Promise.all([
+      fetchConAuth("/api/admin/helprequests"),
+      fetchConAuth("/api/admin/suggestions")
+    ]);
+    const [resultadoContactos, resultadoSugerencias] = await Promise.all([
+      respuestaContactos.json(),
+      respuestaSugerencias.json()
+    ]);
+    if (!respuestaContactos.ok) throw new Error(resultadoContactos.error || "No se pudieron obtener las solicitudes.");
+    if (!respuestaSugerencias.ok) throw new Error(resultadoSugerencias.error || "No se pudieron obtener las recomendaciones.");
 
-    const items = Array.isArray(resultado.items) ? resultado.items : [];
-    if (totalSolicitudesAdmin) totalSolicitudesAdmin.textContent = String(items.length);
+    const contactos = Array.isArray(resultadoContactos.items) ? resultadoContactos.items : [];
+    const sugerencias = Array.isArray(resultadoSugerencias.items) ? resultadoSugerencias.items : [];
+    const registros = [
+      ...contactos.map((item) => ({ ...item, tipoRegistro: "contacto" })),
+      ...sugerencias.map((item) => ({ ...item, tipoRegistro: "sugerencia" }))
+    ].sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+
+    if (totalSolicitudesAdmin) totalSolicitudesAdmin.textContent = String(registros.length);
     listaSolicitudesAdmin.replaceChildren();
-    if (estadoSinSolicitudesAdmin) estadoSinSolicitudesAdmin.hidden = items.length > 0;
+    if (estadoSinSolicitudesAdmin) estadoSinSolicitudesAdmin.hidden = registros.length > 0;
 
-    items.forEach((solicitud) => {
+    registros.forEach((solicitud) => {
       const item = document.createElement("li");
       item.className = "admin-registro";
-
       const titulo = document.createElement("strong");
-      const nombre = solicitud.name || solicitud.nombre || "Contacto sin nombre";
-      titulo.textContent = `Mensaje de: ${nombre}`;
-
-      const detalle = document.createElement("p");
       const fecha = solicitud.createdAt ? new Date(solicitud.createdAt).toLocaleString("es-CO") : "";
-      const correo = solicitud.email || solicitud.correo || "";
-      const tel = solicitud.phone || solicitud.numero || "";
-      detalle.textContent = `Correo: ${correo} · Tel: ${tel} · Fecha: ${fecha}`;
 
-      const mensaje = document.createElement("p");
-      mensaje.textContent = `"${solicitud.message || solicitud.mensaje || ""}"`;
-
-      item.append(titulo, detalle, mensaje);
+      if (solicitud.tipoRegistro === "sugerencia") {
+        titulo.textContent = "Recomendación de producto";
+        const detalle = document.createElement("p");
+        detalle.textContent = `Fecha: ${fecha}`;
+        const mensaje = document.createElement("p");
+        mensaje.textContent = solicitud.product || solicitud.producto || "Sin descripción";
+        item.append(titulo, detalle, mensaje);
+      } else {
+        const nombre = solicitud.name || solicitud.nombre || "Contacto sin nombre";
+        titulo.textContent = `Mensaje de: ${nombre}`;
+        const detalle = document.createElement("p");
+        const correo = solicitud.email || solicitud.correo || "";
+        const tel = solicitud.phone || solicitud.numero || "";
+        detalle.textContent = `Correo: ${correo} · Tel: ${tel} · Fecha: ${fecha}`;
+        const mensaje = document.createElement("p");
+        mensaje.textContent = `"${solicitud.message || solicitud.mensaje || ""}"`;
+        item.append(titulo, detalle, mensaje);
+      }
       listaSolicitudesAdmin.append(item);
     });
   } catch (error) {

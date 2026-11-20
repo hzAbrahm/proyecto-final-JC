@@ -6,6 +6,7 @@ const mongoose = require("mongoose");
 const Product = require("./models/Product");
 const Order = require("./models/order");
 const HelpRequest = require("./models/HelpRequest");
+const Suggestion = require("./models/Suggestion");
 const AdminUser = require("./models/AdminUser");
 const { hashPassword, verifyPassword, generateSessionToken } = require("./auth");
 const { randomUUID } = require("node:crypto");
@@ -354,6 +355,32 @@ async function handleContactRequest(request, response) {
 app.post("/api/contact", handleContactRequest);
 app.post("/api/helprequest", handleContactRequest);
 
+// Registrar recomendaciones de productos en la colección suggestions.
+app.post("/api/suggestions", async (request, response) => {
+  const product = typeof request.body?.product === "string"
+    ? request.body.product.trim()
+    : "";
+
+  if (!product) {
+    return response.status(400).json({ error: "Escribe el producto que te gustaría encontrar." });
+  }
+  if (product.length > 180) {
+    return response.status(400).json({ error: "La recomendación no puede superar los 180 caracteres." });
+  }
+
+  try {
+    const suggestion = await Suggestion.create({ product });
+    return response.status(201).json({
+      ok: true,
+      message: "¡Gracias! Tu recomendación fue recibida.",
+      id: suggestion._id
+    });
+  } catch (error) {
+    console.error("Error al guardar recomendación:", error);
+    return response.status(500).json({ error: "No se pudo guardar la recomendación. Inténtalo de nuevo." });
+  }
+});
+
 // ── AUTENTICACIÓN Y GESTIÓN ADMINISTRATIVA ──
 
 /**
@@ -518,6 +545,17 @@ app.get("/api/admin/helprequests", requireAdminAuth, async (_request, response) 
   } catch (error) {
     console.error("Error al consultar solicitudes de contacto:", error);
     response.status(500).json({ error: "No se pudieron obtener las solicitudes de contacto." });
+  }
+});
+
+// Consultar recomendaciones de productos (protegido).
+app.get("/api/admin/suggestions", requireAdminAuth, async (_request, response) => {
+  try {
+    const items = await Suggestion.find().sort({ createdAt: -1 }).limit(100).lean();
+    response.json({ ok: true, items });
+  } catch (error) {
+    console.error("Error al consultar recomendaciones:", error);
+    response.status(500).json({ error: "No se pudieron obtener las recomendaciones." });
   }
 });
 

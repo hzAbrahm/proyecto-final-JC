@@ -659,11 +659,13 @@ const palabrasProhibidas = [
 ];
 
 if (formularioRecomendacion) {
-  formularioRecomendacion.addEventListener("submit", (evento) => {
+  formularioRecomendacion.addEventListener("submit", async (evento) => {
     evento.preventDefault();
     const campo = formularioRecomendacion.elements.recomendacion;
-    const palabras = normalizarTexto(campo.value).split(/\s+/).filter(Boolean);
+    const producto = campo.value.trim();
+    const palabras = normalizarTexto(producto).split(/\s+/).filter(Boolean);
     const respuesta = document.querySelector("#recomendacion-respuesta");
+    const boton = formularioRecomendacion.querySelector("button[type=\"submit\"]");
     const contieneLenguajeOfensivo = palabras.some((palabra) => palabrasProhibidas.includes(palabra));
 
     if (contieneLenguajeOfensivo) {
@@ -672,11 +674,32 @@ if (formularioRecomendacion) {
       return;
     }
 
+    if (!producto || producto.length > 180) {
+      respuesta.textContent = "Escribe una recomendación de máximo 180 caracteres.";
+      respuesta.classList.add("respuesta-error");
+      return;
+    }
+
     respuesta.classList.remove("respuesta-error");
-    const registrada = registrarSolicitudDemo("sugerencia", { producto: campo.value.trim() });
-    respuesta.textContent = registrada
-      ? "¡Gracias! La sugerencia pasó el filtro y quedó guardada en este navegador."
-      : "La sugerencia pasó el filtro, pero no se pudo guardar en este navegador.";
-    formularioRecomendacion.reset();
+    if (boton) boton.disabled = true;
+    respuesta.textContent = "Enviando recomendación...";
+
+    try {
+      const peticion = await fetch(window.apiUrl("/api/suggestions"), {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({ product: producto })
+      });
+      const resultado = await peticion.json();
+      if (!peticion.ok) throw new Error(resultado.error || "No se pudo enviar la recomendación.");
+
+      respuesta.textContent = resultado.message || "¡Gracias! Tu recomendación fue recibida.";
+      formularioRecomendacion.reset();
+    } catch (error) {
+      respuesta.textContent = error.message || "No se pudo enviar la recomendación. Inténtalo de nuevo.";
+      respuesta.classList.add("respuesta-error");
+    } finally {
+      if (boton) boton.disabled = false;
+    }
   });
 }

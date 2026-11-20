@@ -77,7 +77,6 @@
         </div>
         <button id="cerrar-admin" type="button" class="boton-secundario">cerrar sesión</button>
       </div>
-      <p class="admin-aviso">Panel conectado a MongoDB. Consulta y gestiona el catálogo de productos, pedidos registrados y solicitudes de contacto en tiempo real.</p>
       <div class="admin-metricas">
         <article><span class="bi bi-grid-3x3-gap-fill" aria-hidden="true"></span><strong id="admin-total-productos">—</strong><p>productos en Atlas</p></article>
         <article><span class="bi bi-bag-check-fill" aria-hidden="true"></span><strong id="admin-total-pedidos">0</strong><p>pedidos confirmados</p></article>
@@ -86,7 +85,7 @@
 
       <section class="admin-lista-seccion" aria-labelledby="titulo-admin-productos">
         <h3 id="titulo-admin-productos">catálogo guardado en MongoDB</h3>
-        <p class="admin-aviso">Crea nuevos postres para el catálogo. Los productos se guardan con validación de precios y categorías en MongoDB.</p>
+        <p class="admin-aviso">Crea nuevos postres para el catálogo.</p>
         <form id="form-admin-producto" class="form-admin-producto">
           <label for="producto-admin-nombre">nombre del producto
             <input id="producto-admin-nombre" name="name" type="text" maxlength="100" required>
@@ -139,7 +138,7 @@
       <section class="admin-lista-seccion" aria-labelledby="titulo-admin-pagos">
         <h3 id="titulo-admin-pagos">transacciones</h3>
         <ul id="admin-lista-pagos" class="lista-admin-registros"></ul>
-        <p id="admin-sin-pagos" class="admin-vacio">Aún no hay transacciones de prueba.</p>
+        <p id="admin-sin-pagos" class="admin-vacio">Aún no hay transacciones.</p>
       </section>
       <section class="admin-lista-seccion" aria-labelledby="titulo-admin-solicitudes">
         <h3 id="titulo-admin-solicitudes">contacto, sugerencias y donaciones</h3>

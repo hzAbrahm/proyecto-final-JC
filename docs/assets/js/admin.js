@@ -1,37 +1,94 @@
 /**
- * admin.js — Panel administrativo de demostración y gestión de productos (Atlas).
+ * admin.js — Panel administrativo protegido y gestión integral (Atlas).
  *
  * Se carga en: admin.html.
- * Requiere cargar antes: shared.js (leerListaDemo, guardarListaDemo, formatoCOP,
- * nombresMetodosPago y las claves de localStorage).
- *
- * Origen: fragmentos de docs/assets/js/options.js (se conserva intacto como respaldo).
- * Cada bloque indica con "// ── ... ──" de qué líneas de options.js proviene;
- * el código de dentro es una copia exacta de esas líneas.
+ * Requiere cargar antes: shared.js (formatoCOP y nombresMetodosPago).
  */
 
-// ── Panel administrativo: acceso, pedidos, pagos, solicitudes y gestión de productos (Atlas) (options.js L1416–L1605) ──
 const formularioAdminAcceso = document.querySelector("#form-admin-acceso");
 const seccionAdminAcceso = document.querySelector("#admin-acceso");
 const panelAdmin = document.querySelector("#panel-admin");
+const estadoAdminAcceso = document.querySelector("#estado-admin-acceso");
 const formularioProductoAdmin = document.querySelector("#form-admin-producto");
 const estadoProductoAdmin = document.querySelector("#estado-producto-admin");
 const listaProductosAdminDB = document.querySelector("#admin-lista-productos-db");
 const estadoSinProductosAdminDB = document.querySelector("#admin-sin-productos-db");
 const totalProductosAdmin = document.querySelector("#admin-total-productos");
-const claveSesionAdminDemo = "calles-dulces-admin-demo-sesion-v1";
+const totalPedidosAdmin = document.querySelector("#admin-total-pedidos");
+const totalSolicitudesAdmin = document.querySelector("#admin-total-solicitudes");
+const listaPedidosAdmin = document.querySelector("#admin-lista-pedidos");
+const estadoSinPedidosAdmin = document.querySelector("#admin-sin-pedidos");
+const listaSolicitudesAdmin = document.querySelector("#admin-lista-solicitudes");
+const estadoSinSolicitudesAdmin = document.querySelector("#admin-sin-solicitudes");
+const botonCerrarAdmin = document.querySelector("#cerrar-admin");
+
+const claveTokenAdmin = "calles-dulces-admin-token-v1";
+
+function obtenerTokenAdmin() {
+  try {
+    return sessionStorage.getItem(claveTokenAdmin) || "";
+  } catch {
+    return "";
+  }
+}
+
+function guardarTokenAdmin(token) {
+  try {
+    if (token) {
+      sessionStorage.setItem(claveTokenAdmin, token);
+    } else {
+      sessionStorage.removeItem(claveTokenAdmin);
+    }
+  } catch {
+    // Si el navegador bloquea sessionStorage, continúa en memoria.
+  }
+}
+
+async function fetchConAuth(url, opciones = {}) {
+  const token = obtenerTokenAdmin();
+  const headers = {
+    Accept: "application/json",
+    ...(opciones.headers || {})
+  };
+  if (token) {
+    headers["Authorization"] = `Bearer ${token}`;
+  }
+
+  const respuesta = await fetch(url, { ...opciones, headers });
+
+  if (respuesta.status === 401) {
+    guardarTokenAdmin("");
+    renderizarPanelAdmin();
+    if (estadoAdminAcceso) {
+      estadoAdminAcceso.textContent = "Tu sesión ha expirado o no es válida. Inicia sesión nuevamente.";
+    }
+    throw new Error("Sesión no autorizada.");
+  }
+
+  return respuesta;
+}
 
 function crearRegistroProductoAdmin(producto) {
   const item = document.createElement("li");
   item.className = "admin-registro";
 
   const titulo = document.createElement("strong");
-  titulo.textContent = `${producto.name} · ${formatoCOP.format(producto.priceCOP)}`;
+  const estadoTexto = producto.active ? "" : " (Inactivo)";
+  titulo.textContent = `${producto.name} · ${formatoCOP.format(producto.priceCOP)}${estadoTexto}`;
 
   const detalle = document.createElement("p");
   const peso = producto.weightGrams ? ` · ${producto.weightGrams} g` : "";
-  detalle.textContent = `${producto.category}${peso} · guardado en Atlas`;
-  item.append(titulo, detalle);
+  const restriccion = producto.restriction ? ` · ${producto.restriction}` : "";
+  detalle.textContent = `${producto.category}${peso}${restriccion} · en MongoDB`;
+
+  const botonToggle = document.createElement("button");
+  botonToggle.type = "button";
+  botonToggle.className = "boton-secundario";
+  botonToggle.dataset.productoId = producto._id;
+  botonToggle.dataset.activo = String(Boolean(producto.active));
+  botonToggle.textContent = producto.active ? "desactivar" : "activar";
+
+  item.append(titulo, detalle, botonToggle);
   return item;
 }
 
@@ -39,107 +96,147 @@ async function cargarProductosAtlasAdmin(mostrarEstado = true) {
   if (!listaProductosAdminDB) return;
 
   try {
-    const respuesta = await fetch("/api/products", { headers: { Accept: "application/json" } });
+    const respuesta = await fetchConAuth("/api/products");
     const resultado = await respuesta.json();
-    if (!respuesta.ok) throw new Error(resultado.error || "No se pudo consultar Atlas.");
+    if (!respuesta.ok) throw new Error(resultado.error || "No se pudo consultar el catálogo.");
 
     const items = Array.isArray(resultado.items) ? resultado.items : [];
-    totalProductosAdmin.textContent = String(items.length);
+    if (totalProductosAdmin) totalProductosAdmin.textContent = String(items.length);
     listaProductosAdminDB.replaceChildren(...items.map(crearRegistroProductoAdmin));
-    estadoSinProductosAdminDB.hidden = items.length > 0;
+    if (estadoSinProductosAdminDB) estadoSinProductosAdminDB.hidden = items.length > 0;
     if (mostrarEstado && estadoProductoAdmin) {
-      estadoProductoAdmin.textContent = `Atlas respondió: ${items.length} producto${items.length === 1 ? "" : "s"} activo${items.length === 1 ? "" : "s"}.`;
+      estadoProductoAdmin.textContent = `MongoDB respondió: ${items.length} producto${items.length === 1 ? "" : "s"} activo${items.length === 1 ? "" : "s"}.`;
     }
     return items;
-  } catch {
-    totalProductosAdmin.textContent = "—";
+  } catch (error) {
+    if (totalProductosAdmin) totalProductosAdmin.textContent = "—";
     listaProductosAdminDB.replaceChildren();
-    estadoSinProductosAdminDB.hidden = false;
+    if (estadoSinProductosAdminDB) estadoSinProductosAdminDB.hidden = false;
     if (estadoProductoAdmin) {
-      estadoProductoAdmin.textContent = "No se pudo leer el catálogo de Atlas. Revisa que el servidor esté iniciado con npm start.";
+      estadoProductoAdmin.textContent = error.message || "No se pudo leer el catálogo de MongoDB.";
     }
     return null;
   }
 }
 
-function renderizarPanelAdminDemo() {
-  if (!panelAdmin) return;
-  let sesionActiva = false;
+async function cargarPedidosAtlasAdmin() {
+  if (!listaPedidosAdmin) return;
+
   try {
-    sesionActiva = sessionStorage.getItem(claveSesionAdminDemo) === "activa";
-  } catch {
-    sesionActiva = false;
+    const respuesta = await fetchConAuth("/api/admin/orders");
+    const resultado = await respuesta.json();
+    if (!respuesta.ok) throw new Error(resultado.error || "No se pudieron obtener los pedidos.");
+
+    const pedidos = Array.isArray(resultado.orders) ? resultado.orders : [];
+    if (totalPedidosAdmin) totalPedidosAdmin.textContent = String(pedidos.length);
+    listaPedidosAdmin.replaceChildren();
+    if (estadoSinPedidosAdmin) estadoSinPedidosAdmin.hidden = pedidos.length > 0;
+
+    pedidos.forEach((pedido) => {
+      const item = document.createElement("li");
+      item.className = "admin-registro";
+
+      const titulo = document.createElement("strong");
+      const clienteNombre = pedido.customer?.name || "Sin nombre";
+      titulo.textContent = `${pedido.receipt} · ${clienteNombre}`;
+
+      const detalle = document.createElement("p");
+      const resumenItems = Array.isArray(pedido.items)
+        ? pedido.items.map((it) => `${it.quantity}x ${it.name}`).join(", ")
+        : "";
+      const fecha = pedido.createdAt ? new Date(pedido.createdAt).toLocaleString("es-CO") : "";
+      detalle.textContent = `Total: ${formatoCOP.format(pedido.totalCOP)} · ${pedido.paymentMethod} · ${fecha} · Ítems: [${resumenItems}]`;
+
+      const datosCliente = document.createElement("p");
+      datosCliente.textContent = `Contacto: ${pedido.customer?.phone || "Sin tel"} · ${pedido.customer?.email || ""} · ${pedido.customer?.city || ""}, ${pedido.customer?.address || ""}`;
+
+      const etiquetaEstado = document.createElement("label");
+      etiquetaEstado.textContent = "estado de preparación";
+      const selector = document.createElement("select");
+      selector.dataset.pedidoAdmin = pedido._id;
+
+      const estadoActual = pedido.deliveryStatus || pedido.estadoEntrega || "confirmado";
+      ["confirmado", "preparando", "listo para entregar", "en camino", "entregado"].forEach((estado) => {
+        const opcion = document.createElement("option");
+        opcion.value = estado;
+        opcion.textContent = estado;
+        opcion.selected = estadoActual === estado;
+        selector.append(opcion);
+      });
+
+      etiquetaEstado.append(selector);
+      item.append(titulo, detalle, datosCliente, etiquetaEstado);
+      listaPedidosAdmin.append(item);
+    });
+  } catch (error) {
+    if (totalPedidosAdmin) totalPedidosAdmin.textContent = "—";
+    listaPedidosAdmin.replaceChildren();
+    if (estadoSinPedidosAdmin) {
+      estadoSinPedidosAdmin.hidden = false;
+      estadoSinPedidosAdmin.textContent = error.message || "Error al cargar pedidos.";
+    }
   }
-  panelAdmin.hidden = !sesionActiva;
+}
+
+async function cargarSolicitudesAtlasAdmin() {
+  if (!listaSolicitudesAdmin) return;
+
+  try {
+    const respuesta = await fetchConAuth("/api/admin/helprequests");
+    const resultado = await respuesta.json();
+    if (!respuesta.ok) throw new Error(resultado.error || "No se pudieron obtener las solicitudes.");
+
+    const items = Array.isArray(resultado.items) ? resultado.items : [];
+    if (totalSolicitudesAdmin) totalSolicitudesAdmin.textContent = String(items.length);
+    listaSolicitudesAdmin.replaceChildren();
+    if (estadoSinSolicitudesAdmin) estadoSinSolicitudesAdmin.hidden = items.length > 0;
+
+    items.forEach((solicitud) => {
+      const item = document.createElement("li");
+      item.className = "admin-registro";
+
+      const titulo = document.createElement("strong");
+      const nombre = solicitud.name || solicitud.nombre || "Contacto sin nombre";
+      titulo.textContent = `Mensaje de: ${nombre}`;
+
+      const detalle = document.createElement("p");
+      const fecha = solicitud.createdAt ? new Date(solicitud.createdAt).toLocaleString("es-CO") : "";
+      const correo = solicitud.email || solicitud.correo || "";
+      const tel = solicitud.phone || solicitud.numero || "";
+      detalle.textContent = `Correo: ${correo} · Tel: ${tel} · Fecha: ${fecha}`;
+
+      const mensaje = document.createElement("p");
+      mensaje.textContent = `"${solicitud.message || solicitud.mensaje || ""}"`;
+
+      item.append(titulo, detalle, mensaje);
+      listaSolicitudesAdmin.append(item);
+    });
+  } catch (error) {
+    if (totalSolicitudesAdmin) totalSolicitudesAdmin.textContent = "—";
+    listaSolicitudesAdmin.replaceChildren();
+    if (estadoSinSolicitudesAdmin) {
+      estadoSinSolicitudesAdmin.hidden = false;
+      estadoSinSolicitudesAdmin.textContent = error.message || "Error al cargar solicitudes.";
+    }
+  }
+}
+
+async function renderizarPanelAdmin() {
+  const token = obtenerTokenAdmin();
+  const sesionActiva = Boolean(token);
+
+  if (panelAdmin) panelAdmin.hidden = !sesionActiva;
   if (seccionAdminAcceso) seccionAdminAcceso.hidden = sesionActiva;
   if (!sesionActiva) return;
 
-  const pedidos = leerListaDemo(clavePedidosDemo);
-  const pagos = leerListaDemo(clavePagosDemo);
-  const solicitudes = leerListaDemo(claveSolicitudesDemo);
-  cargarProductosAtlasAdmin();
-  document.querySelector("#admin-total-pedidos").textContent = String(pedidos.length);
-  document.querySelector("#admin-total-solicitudes").textContent = String(solicitudes.length);
-
-  const listaPedidosAdmin = document.querySelector("#admin-lista-pedidos");
-  listaPedidosAdmin.replaceChildren();
-  document.querySelector("#admin-sin-pedidos").hidden = pedidos.length > 0;
-  pedidos.forEach((pedido) => {
-    const item = document.createElement("li");
-    item.className = "admin-registro";
-    const titulo = document.createElement("strong");
-    titulo.textContent = `${pedido.recibo} · ${pedido.nombre}`;
-    const detalle = document.createElement("p");
-    detalle.textContent = `${pedido.metodo} · ${formatoCOP.format(pedido.total)} · ${pedido.estado}`;
-    const etiquetaEstado = document.createElement("label");
-    etiquetaEstado.textContent = "estado de preparación";
-    const selector = document.createElement("select");
-    selector.dataset.pedidoAdmin = pedido.id;
-    ["confirmado", "preparando", "listo para entregar", "en camino", "entregado"].forEach((estado) => {
-      const opcion = document.createElement("option");
-      opcion.value = estado;
-      opcion.textContent = estado;
-      opcion.selected = (pedido.estadoEntrega || "confirmado") === estado;
-      selector.append(opcion);
-    });
-    etiquetaEstado.append(selector);
-    item.append(titulo, detalle, etiquetaEstado);
-    listaPedidosAdmin.append(item);
-  });
-
-  const listaPagosAdmin = document.querySelector("#admin-lista-pagos");
-  listaPagosAdmin.replaceChildren();
-  document.querySelector("#admin-sin-pagos").hidden = pagos.length > 0;
-  pagos.forEach((pago) => {
-    const item = document.createElement("li");
-    item.className = "admin-registro";
-    const titulo = document.createElement("strong");
-    titulo.textContent = `${nombresMetodosPago[pago.metodo] || pago.metodo} · ${pago.estado}`;
-    const detalle = document.createElement("p");
-    detalle.textContent = `${formatoCOP.format(pago.monto)} · ${new Date(pago.fecha).toLocaleString("es-CO")}`;
-    item.append(titulo, detalle);
-    listaPagosAdmin.append(item);
-  });
-
-  const listaSolicitudesAdmin = document.querySelector("#admin-lista-solicitudes");
-  listaSolicitudesAdmin.replaceChildren();
-  document.querySelector("#admin-sin-solicitudes").hidden = solicitudes.length > 0;
-  solicitudes.forEach((solicitud) => {
-    const item = document.createElement("li");
-    item.className = "admin-registro";
-    const titulo = document.createElement("strong");
-    titulo.textContent = `${solicitud.tipo} · ${solicitud.nombre || solicitud.correo || "sin nombre"}`;
-    const detalle = document.createElement("p");
-    const resumen = Object.entries(solicitud)
-      .filter(([clave]) => !["id", "tipo", "fecha"].includes(clave))
-      .map(([clave, valor]) => `${clave}: ${valor}`)
-      .join(" · ");
-    detalle.textContent = `${new Date(solicitud.fecha).toLocaleString("es-CO")} · ${resumen}`;
-    item.append(titulo, detalle);
-    listaSolicitudesAdmin.append(item);
-  });
+  await Promise.all([
+    cargarProductosAtlasAdmin(true),
+    cargarPedidosAtlasAdmin(),
+    cargarSolicitudesAtlasAdmin()
+  ]);
 }
 
+// Evento: Crear producto
 formularioProductoAdmin?.addEventListener("submit", async (evento) => {
   evento.preventDefault();
   if (!formularioProductoAdmin.reportValidity()) return;
@@ -147,12 +244,12 @@ formularioProductoAdmin?.addEventListener("submit", async (evento) => {
   const datos = Object.fromEntries(new FormData(formularioProductoAdmin).entries());
   datos.priceCOP = Number(datos.priceCOP);
   datos.weightGrams = datos.weightGrams ? Number(datos.weightGrams) : null;
-  if (estadoProductoAdmin) estadoProductoAdmin.textContent = "Enviando el producto al servidor...";
+  if (estadoProductoAdmin) estadoProductoAdmin.textContent = "Guardando producto en MongoDB...";
 
   try {
-    const respuesta = await fetch("/api/dev/products", {
+    const respuesta = await fetchConAuth("/api/admin/products", {
       method: "POST",
-      headers: { "Content-Type": "application/json", Accept: "application/json" },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(datos)
     });
     const resultado = await respuesta.json();
@@ -161,43 +258,142 @@ formularioProductoAdmin?.addEventListener("submit", async (evento) => {
     formularioProductoAdmin.reset();
     await cargarProductosAtlasAdmin(false);
     if (estadoProductoAdmin) {
-      estadoProductoAdmin.textContent = `Guardado en Atlas: ${resultado.item.name} (id ${resultado.item._id}).`;
+      estadoProductoAdmin.textContent = `Guardado con éxito en MongoDB: ${resultado.item.name}.`;
     }
   } catch (error) {
     if (estadoProductoAdmin) estadoProductoAdmin.textContent = error.message;
   }
 });
 
-formularioAdminAcceso?.addEventListener("submit", (evento) => {
-  evento.preventDefault();
-  if (!formularioAdminAcceso.reportValidity()) return;
+// Evento: Activar/desactivar producto
+listaProductosAdminDB?.addEventListener("click", async (evento) => {
+  const boton = evento.target.closest("button[data-producto-id]");
+  if (!boton) return;
+
+  const id = boton.dataset.productoId;
+  const activoActual = boton.dataset.activo === "true";
+  boton.disabled = true;
+
   try {
-    sessionStorage.setItem(claveSesionAdminDemo, "activa");
-  } catch {
-    document.querySelector("#estado-admin-acceso").textContent = "El navegador bloqueó la sesión de prueba.";
-    return;
+    const respuesta = await fetchConAuth(`/api/admin/products/${id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ active: !activoActual })
+    });
+    const resultado = await respuesta.json();
+    if (!respuesta.ok) throw new Error(resultado.error || "No se pudo actualizar el estado.");
+
+    await cargarProductosAtlasAdmin(false);
+  } catch (error) {
+    alert(error.message || "Error al actualizar el producto.");
+  } finally {
+    boton.disabled = false;
   }
-  renderizarPanelAdminDemo();
 });
 
-document.querySelector("#cerrar-admin")?.addEventListener("click", () => {
-  try {
-    sessionStorage.removeItem(claveSesionAdminDemo);
-  } catch {
-    // La página vuelve al formulario aunque el almacenamiento de sesión no esté disponible.
-  }
-  renderizarPanelAdminDemo();
-});
-
-document.querySelector("#admin-lista-pedidos")?.addEventListener("change", (evento) => {
+// Evento: Cambiar estado de pedido
+listaPedidosAdmin?.addEventListener("change", async (evento) => {
   const selector = evento.target.closest("select[data-pedido-admin]");
   if (!selector) return;
-  const pedidos = leerListaDemo(clavePedidosDemo);
-  const pedido = pedidos.find((item) => item.id === selector.dataset.pedidoAdmin);
-  if (!pedido) return;
-  pedido.estadoEntrega = selector.value;
-  guardarListaDemo(clavePedidosDemo, pedidos);
-  renderizarPanelAdminDemo();
+
+  const id = selector.dataset.pedidoAdmin;
+  const nuevoEstado = selector.value;
+  selector.disabled = true;
+
+  try {
+    const respuesta = await fetchConAuth(`/api/admin/orders/${id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ deliveryStatus: nuevoEstado })
+    });
+    const resultado = await respuesta.json();
+    if (!respuesta.ok) throw new Error(resultado.error || "No se pudo actualizar el pedido.");
+
+    selector.style.outline = "2px solid #2E8DB6";
+    window.setTimeout(() => { selector.style.outline = ""; }, 1200);
+  } catch (error) {
+    alert(error.message || "Error al actualizar el estado del pedido.");
+    await cargarPedidosAtlasAdmin();
+  } finally {
+    selector.disabled = false;
+  }
 });
 
-renderizarPanelAdminDemo();
+// Evento: Iniciar sesión
+formularioAdminAcceso?.addEventListener("submit", async (evento) => {
+  evento.preventDefault();
+  if (!formularioAdminAcceso.reportValidity()) return;
+
+  const correo = formularioAdminAcceso.elements.correo.value.trim().toLowerCase();
+  const contrasena = formularioAdminAcceso.elements.contrasena.value;
+  const botonSubmit = formularioAdminAcceso.querySelector("button[type='submit']");
+
+  if (botonSubmit) botonSubmit.disabled = true;
+  if (estadoAdminAcceso) estadoAdminAcceso.textContent = "Verificando credenciales...";
+
+  try {
+    const respuesta = await fetch("/api/admin/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json"
+      },
+      body: JSON.stringify({ correo, contrasena })
+    });
+
+    const resultado = await respuesta.json();
+    if (!respuesta.ok) {
+      throw new Error(resultado.error || "No se pudo iniciar sesión.");
+    }
+
+    guardarTokenAdmin(resultado.token);
+    formularioAdminAcceso.reset();
+    if (estadoAdminAcceso) estadoAdminAcceso.textContent = "";
+    await renderizarPanelAdmin();
+  } catch (error) {
+    if (estadoAdminAcceso) {
+      estadoAdminAcceso.textContent = error.message || "Credenciales incorrectas.";
+    }
+  } finally {
+    if (botonSubmit) botonSubmit.disabled = false;
+  }
+});
+
+// Evento: Cerrar sesión
+botonCerrarAdmin?.addEventListener("click", async () => {
+  try {
+    await fetchConAuth("/api/admin/logout", { method: "POST" });
+  } catch {
+    // Si falla la red, cerramos la sesión local de todas formas.
+  }
+  guardarTokenAdmin("");
+  await renderizarPanelAdmin();
+});
+
+// Verificación inicial de sesión al cargar la página
+async function inicializarSesionAdmin() {
+  const token = obtenerTokenAdmin();
+  if (!token) {
+    renderizarPanelAdmin();
+    return;
+  }
+
+  try {
+    const respuesta = await fetch("/api/admin/me", {
+      headers: {
+        Accept: "application/json",
+        Authorization: `Bearer ${token}`
+      }
+    });
+
+    if (!respuesta.ok) {
+      guardarTokenAdmin("");
+    }
+  } catch {
+    guardarTokenAdmin("");
+  }
+
+  renderizarPanelAdmin();
+}
+
+inicializarSesionAdmin();

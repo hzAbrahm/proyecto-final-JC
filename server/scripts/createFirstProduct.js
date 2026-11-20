@@ -9,7 +9,7 @@ if (fs.existsSync(envPath)) process.loadEnvFile(envPath);
 
 const app = require("../app");
 const Product = require("../models/Product");
-const databaseName = process.env.MONGODB_DATABASE || "calles_dulces_dev";
+const databaseName = process.env.MONGODB_DATABASE || "Calles-Dulces";
 
 async function requestJson(url, options) {
   const response = await fetch(url, options);

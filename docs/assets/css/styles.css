@@ -857,6 +857,7 @@ main #contactanos {
 .form-contacto textarea:focus { outline: 3px solid rgba(242, 174, 48, 0.35); border-color: var(--color-2); }
 .form-contacto button { justify-self: start; margin-top: 0.5rem; padding: 0.65rem 1rem; color: var(--color-4); font-family: var(--fuente-1); background: var(--color-2); border: 0; border-radius: 12px; cursor: pointer; }
 .contacto-respuesta { margin: 0; padding: 0; color: var(--color-2); font-size: 0.9rem; }
+.contacto-respuesta.respuesta-error { color: #a83224; }
 
 /* estilos del chatbot */
 

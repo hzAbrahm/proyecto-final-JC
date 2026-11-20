@@ -71,7 +71,7 @@ function confirmarPedidoDemo(pago, modalidad) {
   const datos = pago.pedido;
   const pedido = {
     id: pago.id,
-    recibo: `CD-${pago.id.slice(-8).toUpperCase()}`,
+    recibo: pago.recibo || `CD-${pago.id.slice(-8).toUpperCase()}`,
     nombre: datos.nombre,
     correo: datos.correo,
     telefono: datos.telefono,
@@ -101,7 +101,39 @@ function confirmarPedidoDemo(pago, modalidad) {
   actualizarRegistrosCuentaDemo();
 }
 
-function iniciarPagoDemo(evento) {
+async function registrarPedidoBackend(pago) {
+  const datos = pago.pedido;
+
+  const respuesta = await fetch("/api/orders", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      customer: {
+        name: datos.nombre,
+        email: datos.correo,
+        phone: datos.telefono,
+        city: datos.ciudad,
+        address: datos.direccion
+      },
+      items: carrito.map((producto) => ({
+        productId: producto.productId,
+        quantity: producto.cantidad
+      })),
+      paymentMethod: pago.metodo
+    })
+  });
+
+  const resultado = await respuesta.json();
+
+  if (!respuesta.ok) {
+    throw new Error(resultado.error || "No se pudo registrar el pedido.");
+  }
+
+  return resultado.order;
+}
+async function iniciarPagoDemo(evento) {
   evento.preventDefault();
   if (!formularioCheckout || !carrito.length) return;
   if (!validarDatosMetodoPago() || !formularioCheckout.reportValidity()) return;
@@ -132,7 +164,31 @@ function iniciarPagoDemo(evento) {
 
   if (estadoFormularioCheckout) estadoFormularioCheckout.textContent = "";
   if (metodo === "contraentrega") {
-    confirmarPedidoDemo(pago, "contraentrega");
+    try {
+      const pedidoRegistrado = await registrarPedidoBackend(pago);
+
+      pago.recibo = pedidoRegistrado.receipt;
+      pago.monto = pedidoRegistrado.totalCOP;
+
+      confirmarPedidoDemo(pago, "contraentrega");
+
+      if (estadoFormularioCheckout) {
+        estadoFormularioCheckout.textContent =
+          `¡Pedido confirmado! Recibo: ${pedidoRegistrado.receipt}. Total: ${new Intl.NumberFormat("es-CO", {
+            style: "currency",
+            currency: "COP",
+            maximumFractionDigits: 0
+          }).format(pedidoRegistrado.totalCOP)}.`;
+      }
+    } catch (error) {
+      console.error("Error al registrar el pedido:", error);
+
+      if (estadoFormularioCheckout) {
+        estadoFormularioCheckout.textContent =
+          error.message || "No se pudo registrar el pedido.";
+      }
+    }
+
     return;
   }
 
@@ -140,27 +196,58 @@ function iniciarPagoDemo(evento) {
   guardarPagoActualDemo();
   registrarEstadoPagoDemo(pago);
   renderizarEstadoTransaccionDemo(pago);
-  if (estadoFormularioCheckout) {
-    estadoFormularioCheckout.textContent = "Transacción de prueba iniciada. El pedido seguirá pendiente hasta recibir una aprobación.";
-  }
-}
 
-function actualizarResultadoPagoDemo(estado) {
+  if (estadoFormularioCheckout) {
+    estadoFormularioCheckout.textContent =
+      "Transacción de prueba iniciada. El pedido seguirá pendiente hasta recibir una aprobación.";
+  }
+
+  return;
+}
+  
+
+let aprobacionEnProcesoDemo = false;
+
+async function actualizarResultadoPagoDemo(estado) {
   if (!pagoActualDemo || pagoActualDemo.estado !== "pendiente") return;
-  if (!['aprobado', 'rechazado', 'cancelado'].includes(estado)) return;
+  if (!["aprobado", "rechazado", "cancelado"].includes(estado)) return;
+  if (aprobacionEnProcesoDemo) return;
+
+  if (estado === "aprobado") {
+    aprobacionEnProcesoDemo = true;
+
+    try {
+      const pedidoRegistrado = await registrarPedidoBackend(pagoActualDemo);
+
+      pagoActualDemo.recibo = pedidoRegistrado.receipt;
+      pagoActualDemo.monto = pedidoRegistrado.totalCOP;
+      pagoActualDemo.estado = "aprobado";
+      pagoActualDemo.fechaActualizacion = new Date().toISOString();
+
+      confirmarPedidoDemo(pagoActualDemo, "aprobado");
+
+    } catch (error) {
+      console.error("Error al registrar el pedido:", error);
+
+      if (estadoFormularioCheckout) {
+        estadoFormularioCheckout.textContent =
+          error.message || "No se pudo registrar el pedido.";
+      }
+
+    } finally {
+      aprobacionEnProcesoDemo = false;
+    }
+
+    return;
+  }
 
   pagoActualDemo.estado = estado;
   pagoActualDemo.fechaActualizacion = new Date().toISOString();
-  if (estado === "aprobado") {
-    confirmarPedidoDemo(pagoActualDemo, "aprobado");
-    return;
-  }
 
   guardarPagoActualDemo();
   registrarEstadoPagoDemo(pagoActualDemo);
   renderizarEstadoTransaccionDemo(pagoActualDemo);
 }
-
 const panelesMetodoPago = document.querySelectorAll("[data-metodo-pago]");
 const opcionesMetodoPago = formularioCheckout?.querySelectorAll('input[name="metodo-pago"]') || [];
 function cambiarMetodoPago(metodo) {

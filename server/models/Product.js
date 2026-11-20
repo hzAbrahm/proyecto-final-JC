@@ -59,6 +59,15 @@ const productSchema = new mongoose.Schema({
     default: "",
     maxlength: 500
   },
+  restriction: {
+    type: String,
+    trim: true,
+    lowercase: true,
+    default: "",
+    // Valores posibles: "" (ninguna), "sin-leche", "sin-gluten", "vegano"
+    // Los productos que no tengan este campo quedan con "" y el filtro los omite correctamente.
+    enum: ["", "sin-leche", "sin-gluten", "vegano"]
+  },
   active: {
     type: Boolean,
     default: true

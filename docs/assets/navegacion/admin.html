@@ -56,7 +56,7 @@
     <section id="admin-acceso" class="admin-panel" aria-labelledby="titulo-admin-acceso">
       <span class="seccion-icono" aria-hidden="true"><i class="bi bi-shield-lock-fill"></i></span>
       <h2 id="titulo-admin-acceso">iniciar sesión de administración</h2>
-      <p class="admin-aviso">Acceso de demostración local. Cualquier correo válido y contraseña de 8 caracteres permiten ver el panel; no se autentica con un servidor.</p>
+      <p class="admin-aviso">Acceso administrativo protegido. Ingresa las credenciales autorizadas del equipo.</p>
       <form id="form-admin-acceso" class="form-admin-acceso">
         <label>correo del equipo
           <input name="correo" type="email" autocomplete="username" required>
@@ -72,12 +72,12 @@
     <section id="panel-admin" class="admin-panel panel-admin" aria-labelledby="titulo-panel-admin" hidden>
       <div class="admin-panel-cabecera">
         <div>
-          <span class="tienda-etiqueta">datos de este navegador</span>
+          <span class="tienda-etiqueta">base de datos calles-dulces</span>
           <h2 id="titulo-panel-admin">panel de gestión</h2>
         </div>
         <button id="cerrar-admin" type="button" class="boton-secundario">cerrar sesión</button>
       </div>
-      <p class="admin-aviso">Pedidos y solicitudes siguen guardándose en este navegador. El catálogo de prueba sí se consulta y se guarda en Atlas mientras el servidor esté en modo de desarrollo local. Este acceso todavía no verifica una cuenta real.</p>
+      <p class="admin-aviso">Panel conectado a MongoDB. Consulta y gestiona el catálogo de productos, pedidos registrados y solicitudes de contacto en tiempo real.</p>
       <div class="admin-metricas">
         <article><span class="bi bi-grid-3x3-gap-fill" aria-hidden="true"></span><strong id="admin-total-productos">—</strong><p>productos en Atlas</p></article>
         <article><span class="bi bi-bag-check-fill" aria-hidden="true"></span><strong id="admin-total-pedidos">0</strong><p>pedidos confirmados</p></article>
@@ -86,7 +86,7 @@
 
       <section class="admin-lista-seccion" aria-labelledby="titulo-admin-productos">
         <h3 id="titulo-admin-productos">catálogo guardado en MongoDB</h3>
-        <p class="admin-aviso">Esta prueba solo permite crear productos desde tu computador mientras `NODE_ENV=development`. No pongas credenciales ni datos sensibles en estos campos.</p>
+        <p class="admin-aviso">Crea nuevos postres para el catálogo. Los productos se guardan con validación de precios y categorías en MongoDB.</p>
         <form id="form-admin-producto" class="form-admin-producto">
           <label for="producto-admin-nombre">nombre del producto
             <input id="producto-admin-nombre" name="name" type="text" maxlength="100" required>
@@ -106,6 +106,14 @@
           </label>
           <label for="producto-admin-peso">peso en gramos (opcional)
             <input id="producto-admin-peso" name="weightGrams" type="number" min="1" step="1" inputmode="numeric">
+          </label>
+          <label for="producto-admin-restriccion">opción especial (opcional)
+            <select id="producto-admin-restriccion" name="restriction">
+              <option value="">ninguna</option>
+              <option value="sin-leche">sin leche</option>
+              <option value="sin-gluten">sin gluten</option>
+              <option value="vegano">vegano</option>
+            </select>
           </label>
           <label class="admin-campo-producto-ancho" for="producto-admin-descripcion">descripción (opcional)
             <textarea id="producto-admin-descripcion" name="description" rows="3" maxlength="1200"></textarea>

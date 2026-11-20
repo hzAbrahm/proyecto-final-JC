@@ -19,7 +19,7 @@
 const filtros = document.querySelector("#filtros-productos");
 const busqueda = document.querySelector("#form-busqueda");
 const formularioRecomendacion = document.querySelector("#form-recomendacion");
-const listaProductos = document.querySelectorAll("#lista-productos > .producto");
+let listaProductos = [];
 const resultadoFiltros = document.querySelector("#resultado-filtros");
 const campoBusqueda = document.querySelector("#buscar-postre");
 const listaFavoritos = document.querySelector("#lista-favoritos");
@@ -27,6 +27,48 @@ const listaFavoritosCuenta = document.querySelector("#cuenta-lista-favoritos");
 const tarjetaVerMas = document.querySelector("#tarjeta-ver-mas");
 const botonVerMas = document.querySelector("#boton-ver-mas");
 let catalogoExpandido = false;
+
+async function cargarProductos() {
+  const contenedor = document.querySelector("#lista-productos");
+
+  if (!contenedor) return;
+
+  try {
+    const respuesta = await fetch("/api/products");
+
+    if (!respuesta.ok) {
+      throw new Error("No se pudieron cargar los productos.");
+    }
+
+    const datos = await respuesta.json();
+    const productosActivos = datos.items.filter(
+      (producto) => producto.active
+    );
+
+    contenedor.replaceChildren(
+      ...productosActivos.map(crearTarjetaProducto)
+    );
+
+    if (tarjetaVerMas) {
+      contenedor.appendChild(tarjetaVerMas);
+    }
+
+    listaProductos = Array.from(
+      contenedor.querySelectorAll(".producto")
+    );
+
+    prepararTarjetasTienda();
+
+    actualizarProductos();
+
+    console.log("Productos cargados:", productosActivos.length);
+
+  } catch (error) {
+    console.error("Error al cargar el catálogo:", error);
+  }
+}
+
+cargarProductos();
 
 function limiteProductos() {
   return Number.parseInt(
@@ -58,10 +100,23 @@ function actualizarProductos() {
   const productosCoincidentes = [];
 
   listaProductos.forEach((producto) => {
-    const coincideCategoria = !categoria || producto.dataset.categoria === categoria;
-    const coincideIngrediente = !ingrediente || producto.dataset.ingrediente === ingrediente;
-    const coincideRestriccion = !restriccion || producto.dataset.restriccion === restriccion;
-    const coincideTexto = !texto || producto.textContent.toLowerCase().includes(texto);
+    const coincideCategoria =
+      !categoria || producto.dataset.categoria === categoria;
+
+    const coincideIngrediente =
+      !ingrediente || producto.dataset.ingrediente.includes(
+        ingrediente.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase()
+      );
+
+    const coincideRestriccion =
+      !restriccion || producto.dataset.restriccion === restriccion;
+    const contenidoProducto = (
+      producto.textContent + " " +
+      producto.dataset.descripcion + " " +
+      producto.dataset.ingrediente
+    ).toLowerCase();
+
+    const coincideTexto = !texto || contenidoProducto.includes(texto);
     const mostrar = coincideCategoria && coincideIngrediente && coincideRestriccion && coincideTexto;
 
     producto.hidden = !mostrar;
@@ -123,109 +178,6 @@ controlesCantidadDetalle?.addEventListener("click", (evento) => {
   actualizarCantidadDetalle(cantidadDetalle + (boton.dataset.accion === "sumar-detalle" ? 1 : -1));
 });
 
-const descripcionesProductos = {
-  "tiramisu": {
-    descripcion: "Postre cremoso en capas, con café y un toque de cacao.",
-    ingredientes: "bizcocho, café, queso mascarpone, crema y cacao.",
-    peso: "120 g"
-  },
-  "brownie": {
-    descripcion: "Brownie artesanal, húmedo por dentro y con intenso sabor a chocolate.",
-    ingredientes: "chocolate, harina, azúcar, huevo y mantequilla.",
-    peso: "90 g"
-  },
-  "pastel-de-vainilla": {
-    descripcion: "Porción de pastel suave con aroma de vainilla y cubierta cremosa.",
-    ingredientes: "harina, vainilla, huevo, leche y azúcar.",
-    peso: "150 g"
-  },
-  "galletas-con-chocolate": {
-    descripcion: "Galletas doradas y crujientes con trozos de chocolate.",
-    ingredientes: "harina, chocolate, azúcar y aceite vegetal.",
-    peso: "100 g (2 unidades)"
-  },
-  "parfait-de-frutas": {
-    descripcion: "Capas frescas de fruta y crema, servidas en una porción individual.",
-    ingredientes: "frutas de temporada, yogur y granola.",
-    peso: "180 g"
-  },
-  "torta-de-fresa": {
-    descripcion: "Torta esponjosa con fresas y una suave capa de crema.",
-    ingredientes: "fresa, harina, huevo, crema y azúcar.",
-    peso: "160 g"
-  },
-  "caramelos-artesanales": {
-    descripcion: "Caramelos hechos a mano, dulces y con un delicado toque acaramelado.",
-    ingredientes: "azúcar, glucosa, crema y sabor natural.",
-    peso: "80 g"
-  },
-  "flan-de-vainilla": {
-    descripcion: "Flan suave de vainilla con una capa de caramelo.",
-    ingredientes: "leche, huevo, vainilla, azúcar y caramelo.",
-    peso: "140 g"
-  },
-  "galletas-de-avena": {
-    descripcion: "Galletas horneadas de avena, ideales para un antojo ligero.",
-    ingredientes: "avena, harina, banano y azúcar.",
-    peso: "100 g (2 unidades)"
-  },
-  "blondie-de-caramelo": {
-    descripcion: "Blondie suave con notas de vainilla y caramelo.",
-    ingredientes: "harina, azúcar rubia, vainilla, huevo y caramelo.",
-    peso: "90 g"
-  },
-  "torta-de-chocolate": {
-    descripcion: "Porción de torta esponjosa con sabor profundo a chocolate.",
-    ingredientes: "chocolate, harina, huevo, leche y azúcar.",
-    peso: "160 g"
-  },
-  "mouse-de-fresa": {
-    descripcion: "Mousse ligera de fresa con textura aireada y sabor frutal.",
-    ingredientes: "fresa, crema, azúcar y gelatina.",
-    peso: "130 g"
-  },
-  "brochetas-de-fruta": {
-    descripcion: "Fruta fresca de temporada preparada en una práctica brocheta.",
-    ingredientes: "fresa, uva, piña y banano.",
-    peso: "150 g"
-  },
-  "macarons-de-vainilla": {
-    descripcion: "Macarons delicados con cubierta crujiente y relleno de vainilla.",
-    ingredientes: "harina de almendra, azúcar, clara de huevo y vainilla.",
-    peso: "90 g (3 unidades)"
-  },
-  "cheesecake-de-caramelo": {
-    descripcion: "Cheesecake cremoso con una base crujiente y cubierta de caramelo.",
-    ingredientes: "queso crema, galleta, crema y caramelo.",
-    peso: "150 g"
-  },
-  "brownie-de-frutos-rojos": {
-    descripcion: "Brownie de chocolate acompañado de frutos rojos.",
-    ingredientes: "chocolate, frutos rojos, harina, azúcar y huevo.",
-    peso: "100 g"
-  },
-  "torta-de-frutos-rojos": {
-    descripcion: "Torta suave con frutos rojos frescos y cubierta cremosa.",
-    ingredientes: "fresa, mora, harina, huevo y crema.",
-    peso: "160 g"
-  },
-  "trufas-de-chocolate": {
-    descripcion: "Bocados de chocolate intenso cubiertos con cacao.",
-    ingredientes: "chocolate, cacao y crema vegetal.",
-    peso: "90 g (3 unidades)"
-  },
-  "galletas-rellenas-de-fresa": {
-    descripcion: "Galletas suaves con un centro dulce de fresa.",
-    ingredientes: "harina, fresa, azúcar y mantequilla.",
-    peso: "100 g (2 unidades)"
-  },
-  "panna-cotta-de-chocolate": {
-    descripcion: "Postre frío y sedoso con sabor a chocolate.",
-    ingredientes: "crema, chocolate, azúcar y gelatina.",
-    peso: "140 g"
-  }
-};
-
 // ── Tarjetas de producto, catálogo para Mi cuenta y estado de favoritos (options.js L285–L377) ──
 function crearIdProducto(titulo) {
   return titulo
@@ -272,54 +224,114 @@ function crearControlCantidadTienda(producto) {
   botonAnadir.before(controles);
 }
 
-const productos = Array.from(listaProductos);
-const tarjetasTienda = Array.from(document.querySelectorAll("#favoritos .producto, #lista-productos .producto"));
-tarjetasTienda.forEach((producto) => {
-  const titulo = producto.querySelector("h3, h4")?.textContent.trim() || "postre";
-  producto.dataset.id = crearIdProducto(titulo);
-  producto.tabIndex = 0;
-  producto.setAttribute("aria-label", `Ver descripción de ${titulo}`);
-  producto.dataset.cantidadSeleccionada = "1";
-  crearControlCantidadTienda(producto);
+function crearTarjetaProducto(producto) {
+  const tarjeta = document.createElement("li");
+  tarjeta.className = "producto";
+  tarjeta.dataset.id = producto.slug;
+  tarjeta.dataset.productId = producto._id;
+  tarjeta.dataset.categoria = producto.category || "";
+  tarjeta.dataset.ingrediente = (producto.ingredients || "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
 
-  const botonFavorito = document.createElement("button");
-  botonFavorito.type = "button";
-  botonFavorito.className = "boton-favorito";
-  botonFavorito.textContent = "✦";
-  botonFavorito.setAttribute("aria-pressed", "false");
-  producto.prepend(botonFavorito);
-});
+  tarjeta.dataset.descripcion = producto.description || "";
+  tarjeta.dataset.detalleIngredientes = producto.ingredients || "";
+  tarjeta.dataset.peso = producto.weightGrams || "";
+  tarjeta.dataset.restriccion = producto.restriction || "";
+
+  const titulo = document.createElement("h3");
+  titulo.textContent = producto.name;
+
+  const contenedorImagen = document.createElement("div");
+  contenedorImagen.className = "imagenproducto";
+
+  const imagen = document.createElement("img");
+  imagen.src = producto.imageUrl || "";
+  imagen.alt = producto.name;
+  imagen.loading = "lazy";
+
+  const boton = document.createElement("button");
+  boton.type = "button";
+  boton.className = "añadir-producto";
+  boton.textContent = "añadir al carrito";
+
+  const precio = document.createElement("p");
+  precio.className = "precio";
+  precio.textContent = `${Number(producto.priceCOP).toLocaleString("es-CO")} COP`;
+
+  contenedorImagen.append(imagen, boton, precio);
+  tarjeta.append(titulo, contenedorImagen);
+
+  return tarjeta;
+}
+
+let productos = [];
+let favoritos = new Set();
 
 const claveCatalogoFavoritos = "calles-dulces-catalogo-favoritos-v1";
-if (productos.length) {
+const claveFavoritos = "calles-dulces-favoritos-personales-v1";
+
+function prepararTarjetasTienda() {
+  const tarjetasTienda = Array.from(
+    document.querySelectorAll("#favoritos .producto, #lista-productos .producto")
+  );
+
+  tarjetasTienda.forEach((producto) => {
+    const titulo = producto.querySelector("h3, h4")?.textContent.trim() || "postre";
+
+    producto.dataset.id = producto.dataset.id || crearIdProducto(titulo);
+    producto.tabIndex = 0;
+    producto.setAttribute("aria-label", `Ver descripción de ${titulo}`);
+    producto.dataset.cantidadSeleccionada = "1";
+
+    crearControlCantidadTienda(producto);
+
+    if (!producto.querySelector(".boton-favorito")) {
+      const botonFavorito = document.createElement("button");
+      botonFavorito.type = "button";
+      botonFavorito.className = "boton-favorito";
+      botonFavorito.textContent = "✦";
+      botonFavorito.setAttribute("aria-pressed", "false");
+      producto.prepend(botonFavorito);
+    }
+  });
+
+  productos = Array.from(listaProductos);
+
   const catalogoParaCuenta = productos.map((producto) => ({
     id: producto.dataset.id,
     titulo: producto.querySelector("h3")?.textContent.trim() || "postre",
     imagen: producto.querySelector("img")?.src || "",
     textoAlternativo: producto.querySelector("img")?.alt || "",
     precio: producto.querySelector(".precio")?.textContent.trim() || "",
-    categoria: producto.dataset.categoria || ""
+    categoria: producto.dataset.categoria || "",
+    productId: producto.dataset.productId,
   }));
 
   try {
-    localStorage.setItem(claveCatalogoFavoritos, JSON.stringify(catalogoParaCuenta));
+    localStorage.setItem(
+      claveCatalogoFavoritos,
+      JSON.stringify(catalogoParaCuenta)
+    );
+
+    const guardados = JSON.parse(
+      localStorage.getItem(claveFavoritos) || "[]"
+    );
+
+    const idsProductos = new Set(productos.map((producto) => producto.dataset.id));
+
+    favoritos = new Set(
+      Array.isArray(guardados)
+        ? guardados.filter((id) => idsProductos.has(id))
+        : []
+    );
   } catch {
-    // La tienda sigue funcionando aunque el navegador bloquee el almacenamiento local.
+    favoritos = new Set();
   }
-}
 
-const claveFavoritos = "calles-dulces-favoritos-personales-v1";
-let favoritosGuardados;
-try {
-  const favoritosEnAlmacen = localStorage.getItem(claveFavoritos);
-  favoritosGuardados = favoritosEnAlmacen === null ? [] : JSON.parse(favoritosEnAlmacen);
-  if (!Array.isArray(favoritosGuardados)) favoritosGuardados = [];
-} catch {
-  favoritosGuardados = [];
+  actualizarEstrellas();
 }
-
-const idsProductos = new Set(productos.map((producto) => producto.dataset.id));
-const favoritos = new Set(favoritosGuardados.filter((id) => !idsProductos.size || idsProductos.has(id)));
 
 // ── Favoritos: estrellas y lista de favoritos de Mi cuenta (options.js L379–L461) ──
 function actualizarEstrellas() {
@@ -359,6 +371,7 @@ function actualizarFavoritosCuenta() {
     const tarjeta = document.createElement("li");
     tarjeta.className = "producto";
     tarjeta.dataset.id = producto.id;
+    tarjeta.dataset.productId = producto.productId;
 
     const botonFavorito = document.createElement("button");
     botonFavorito.type = "button";
@@ -407,6 +420,21 @@ function actualizarFavoritosCuenta() {
 }
 
 // ── Favoritos: render inicial de Mi cuenta y alternarFavorito (options.js L497–L514) ──
+
+try {
+  const guardados = JSON.parse(
+    localStorage.getItem(claveFavoritos) || "[]"
+  );
+
+  favoritos = new Set(
+    Array.isArray(guardados)
+      ? guardados.filter((id) => typeof id === "string")
+      : []
+  );
+} catch {
+  favoritos = new Set();
+}
+
 actualizarFavoritosCuenta();
 
 function alternarFavorito(boton) {
@@ -439,7 +467,8 @@ function agregarProductoAlCarrito(producto, boton, cantidad = 1) {
   const valor = Number(precio.replace(/[^0-9]/g, "")) || 0;
   const existente = carrito.find((item) => item.id === id);
   if (existente) {
-    existente.cantidad += cantidadSolicitada;
+  existente.productId = producto.dataset.productId;
+  existente.cantidad += cantidadSolicitada;
   } else {
     carrito.push({
       id,
@@ -448,7 +477,8 @@ function agregarProductoAlCarrito(producto, boton, cantidad = 1) {
       textoAlternativo: imagen?.alt || "Postre",
       precio,
       valor,
-      cantidad: cantidadSolicitada
+      cantidad: cantidadSolicitada,
+      productId: producto.dataset.productId,
     });
   }
 
@@ -472,10 +502,12 @@ function abrirDescripcion(producto) {
 
   const titulo = producto.querySelector("h3, h4")?.textContent.trim() || "Postre";
   const imagen = producto.querySelector("img");
-  const detalle = descripcionesProductos[producto.dataset.id] || {
-    descripcion: "Un postre preparado para disfrutar algo dulce.",
-    ingredientes: "información de muestra, pendiente de confirmar.",
-    peso: "porción individual"
+  const detalle = {
+    descripcion: producto.dataset.descripcion || "Descripción no disponible.",
+    ingredientes: producto.dataset.detalleIngredientes || "Ingredientes no especificados.",
+    peso: producto.dataset.peso
+      ? `${producto.dataset.peso} g`
+      : "Peso no especificado."
   };
 
   document.querySelector("#detalle-titulo").textContent = titulo;
@@ -516,7 +548,9 @@ if (botonRecomendarProducto && filtros) {
     const texto = campoBusqueda?.value.trim().toLowerCase() || "";
     const candidatos = Array.from(listaProductos).filter((producto) => {
       return (!categoria || producto.dataset.categoria === categoria)
-        && (!ingrediente || producto.dataset.ingrediente === ingrediente)
+        && (!ingrediente || producto.dataset.ingrediente.includes(
+          ingrediente.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase()
+        ))
         && (!restriccion || producto.dataset.restriccion === restriccion)
         && (!texto || producto.textContent.toLowerCase().includes(texto));
     });
@@ -551,20 +585,20 @@ if (botonVerRecomendacion) {
 const listasTienda = [document.querySelector("#lista-productos"), listaFavoritos, listaFavoritosCuenta].filter(Boolean);
 listasTienda.forEach((lista) => {
   lista.addEventListener("click", (evento) => {
-      const botonCantidad = evento.target.closest(".controles-tienda button[data-accion]");
-      if (botonCantidad) {
-        const producto = botonCantidad.closest(".producto");
-        const cantidadActual = Number.parseInt(producto?.dataset.cantidadSeleccionada || "1", 10) || 1;
-        const cambio = botonCantidad.dataset.accion === "sumar-tienda" ? 1 : -1;
-        if (producto) actualizarCantidadTienda(producto, cantidadActual + cambio);
-        return;
-      }
+    const botonCantidad = evento.target.closest(".controles-tienda button[data-accion]");
+    if (botonCantidad) {
+      const producto = botonCantidad.closest(".producto");
+      const cantidadActual = Number.parseInt(producto?.dataset.cantidadSeleccionada || "1", 10) || 1;
+      const cambio = botonCantidad.dataset.accion === "sumar-tienda" ? 1 : -1;
+      if (producto) actualizarCantidadTienda(producto, cantidadActual + cambio);
+      return;
+    }
 
     const botonAnadir = evento.target.closest(".añadir-producto");
     if (botonAnadir) {
       const producto = botonAnadir.closest(".producto");
-        const cantidad = Number.parseInt(producto?.dataset.cantidadSeleccionada || "1", 10) || 1;
-        if (producto) agregarProductoAlCarrito(producto, botonAnadir, cantidad);
+      const cantidad = Number.parseInt(producto?.dataset.cantidadSeleccionada || "1", 10) || 1;
+      if (producto) agregarProductoAlCarrito(producto, botonAnadir, cantidad);
       return;
     }
 

@@ -15,7 +15,7 @@ if (fs.existsSync(envPath)) {
 
 const expressApp = require("./app");
 const port = Number(process.env.PORT) || 3000;
-const databaseName = process.env.MONGODB_DATABASE || "calles_dulces_dev";
+const databaseName = process.env.MONGODB_DATABASE || "Calles-Dulces";
 
 async function startServer() {
   const mongoUri = process.env.MONGODB_URI;

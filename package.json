@@ -1,7 +1,8 @@
 {
   "scripts": {
     "start": "node server/index.js",
-    "create:first-product": "node server/scripts/createFirstProduct.js"
+    "create:first-product": "node server/scripts/createFirstProduct.js",
+    "create:admin": "node server/scripts/createAdminUser.js"
   },
   "engines": {
     "node": ">=20.12"

@@ -1441,7 +1441,7 @@ async function cargarProductosAtlasAdmin(mostrarEstado = true) {
   if (!listaProductosAdminDB) return;
 
   try {
-    const respuesta = await fetch("/api/products", { headers: { Accept: "application/json" } });
+    const respuesta = await fetch(window.apiUrl("/api/products"), { headers: { Accept: "application/json" } });
     const resultado = await respuesta.json();
     if (!respuesta.ok) throw new Error(resultado.error || "No se pudo consultar Atlas.");
 
@@ -1552,7 +1552,7 @@ formularioProductoAdmin?.addEventListener("submit", async (evento) => {
   if (estadoProductoAdmin) estadoProductoAdmin.textContent = "Enviando el producto al servidor...";
 
   try {
-    const respuesta = await fetch("/api/dev/products", {
+    const respuesta = await fetch(window.apiUrl("/api/dev/products"), {
       method: "POST",
       headers: { "Content-Type": "application/json", Accept: "application/json" },
       body: JSON.stringify(datos)

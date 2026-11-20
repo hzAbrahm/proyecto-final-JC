@@ -34,7 +34,7 @@ async function cargarProductos() {
   if (!contenedor) return;
 
   try {
-    const respuesta = await fetch("/api/products");
+    const respuesta = await fetch(window.apiUrl("/api/products"));
 
     if (!respuesta.ok) {
       throw new Error("No se pudieron cargar los productos.");

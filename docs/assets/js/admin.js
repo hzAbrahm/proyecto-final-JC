@@ -54,7 +54,7 @@ async function fetchConAuth(url, opciones = {}) {
     headers["Authorization"] = `Bearer ${token}`;
   }
 
-  const respuesta = await fetch(url, { ...opciones, headers });
+  const respuesta = await fetch(window.apiUrl(url), { ...opciones, headers });
 
   if (respuesta.status === 401) {
     guardarTokenAdmin("");
@@ -332,7 +332,7 @@ formularioAdminAcceso?.addEventListener("submit", async (evento) => {
   if (estadoAdminAcceso) estadoAdminAcceso.textContent = "Verificando credenciales...";
 
   try {
-    const respuesta = await fetch("/api/admin/login", {
+    const respuesta = await fetch(window.apiUrl("/api/admin/login"), {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -379,7 +379,7 @@ async function inicializarSesionAdmin() {
   }
 
   try {
-    const respuesta = await fetch("/api/admin/me", {
+    const respuesta = await fetch(window.apiUrl("/api/admin/me"), {
       headers: {
         Accept: "application/json",
         Authorization: `Bearer ${token}`

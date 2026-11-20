@@ -104,7 +104,7 @@ function confirmarPedidoDemo(pago, modalidad) {
 async function registrarPedidoBackend(pago) {
   const datos = pago.pedido;
 
-  const respuesta = await fetch("/api/orders", {
+  const respuesta = await fetch(window.apiUrl("/api/orders"), {
     method: "POST",
     headers: {
       "Content-Type": "application/json"

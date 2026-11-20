@@ -360,7 +360,7 @@ if (contactoToggle && formularioContacto && seccionContacto) {
     }
 
     try {
-      const peticion = await fetch("/api/contact", {
+      const peticion = await fetch(window.apiUrl("/api/contact"), {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -17,18 +17,23 @@ const productRestrictions = new Set(["", "sin-leche", "sin-gluten", "vegano"]);
 
 app.disable("x-powered-by");
 
-// Permitir solicitudes desde el frontend local
+// CORS: permite el frontend local y los dominios declarados para producción.
+const frontendOrigins = new Set([
+  "http://localhost:3000",
+  "http://127.0.0.1:3000",
+  "https://hzabrahm.github.io",
+  ...(process.env.FRONTEND_ORIGINS || "").split(",").map((origin) => origin.trim()).filter(Boolean)
+]);
+
 app.use((request, response, next) => {
   const origin = request.headers.origin;
-  if (origin && (/^http:\/\/localhost(:\d+)?$/.test(origin) || /^http:\/\/127\.0\.0\.1(:\d+)?$/.test(origin))) {
+  if (origin && frontendOrigins.has(origin)) {
     response.setHeader("Access-Control-Allow-Origin", origin);
-  } else {
-    response.setHeader("Access-Control-Allow-Origin", "http://127.0.0.1:3000");
   }
 
   response.setHeader("Vary", "Origin");
-  response.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-  response.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  response.setHeader("Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE, OPTIONS");
+  response.setHeader("Access-Control-Allow-Headers", "Accept, Content-Type, Authorization");
 
   if (request.method === "OPTIONS") {
     return response.sendStatus(204);

@@ -58,7 +58,7 @@
       <div class="cuenta-acceso-cabecera">
         <div>
           <h2 id="titulo-acceso-cuenta">Accede a tu cuenta</h2>
-          <p>Guarda tus datos en este navegador para probar la experiencia.</p>
+          <p>Crea tu cuenta o inicia sesión para acceder a tu perfil.</p>
         </div>
         <div class="avatar-perfil-grande" aria-hidden="true">
           <img id="cuenta-avatar-imagen" alt="" hidden>
@@ -91,16 +91,16 @@
         </label>
         <p id="estado-cuenta-acceso" class="estado-cuenta-acceso" aria-live="polite"></p>
         <button id="enviar-cuenta-acceso" type="submit" class="boton">crear cuenta</button>
-        <p class="aviso-demo-cuenta">Prototipo local: no verifica identidades ni envía contraseñas. No uses una contraseña real.</p>
+        <p class="aviso-demo-cuenta">Tu contraseña se protege mediante hash y no se almacena en texto plano.</p>
       </form>
       <div class="cuenta-acceso-admin">
         <a href="admin.html">¿Eres parte del equipo? ir a administración</a>
       </div>
     </section>
 
-    <p class="cuenta-aviso"><i class="bi bi-info-circle" aria-hidden="true"></i> Prototipo local: perfil, favoritos y pedidos se guardan solo en este navegador. La autenticación real y la sincronización requieren el backend.</p>
+    <p class="cuenta-aviso"><i class="bi bi-info-circle" aria-hidden="true"></i> La cuenta se valida en el servidor. Los favoritos y algunos datos de actividad todavía se guardan en este navegador.</p>
 
-    <div class="cuenta-layout">
+    <div class="cuenta-layout" id="cuenta-contenido-privado" hidden>
       <aside class="cuenta-sidebar">
         <button id="cuenta-menu-toggle" class="cuenta-menu-toggle" type="button" aria-expanded="false" aria-controls="cuenta-menu-secciones">
           <i class="bi bi-list" aria-hidden="true"></i><span>secciones</span>

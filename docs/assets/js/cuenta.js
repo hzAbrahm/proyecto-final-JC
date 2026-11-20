@@ -59,6 +59,14 @@ const siluetaAvatarCuenta = document.querySelector("#cuenta-avatar-silueta");
 const tituloAccesoCuenta = document.querySelector("#titulo-acceso-cuenta");
 let modoCuentaDemo = "registro";
 
+// El perfil guardado localmente no demuestra que el token siga vigente.
+// Ocultar el contenido privado hasta validar la sesión contra el backend.
+const contenidoPrivadoCuenta = document.querySelector("#cuenta-contenido-privado");
+const perfilLocalPrevioCuenta = perfilSesionDemo;
+perfilSesionDemo = null;
+if (contenidoPrivadoCuenta) contenidoPrivadoCuenta.hidden = true;
+
+
 function cambiarModoAccesoCuenta(modo) {
   modoCuentaDemo = modo;
   const esRegistro = modo === "registro";
@@ -117,10 +125,12 @@ async function convertirFotoPerfil(file) {
 }
 
 function actualizarVistaSesionCuenta() {
+  if (contenidoPrivadoCuenta) contenidoPrivadoCuenta.hidden = !perfilSesionDemo;
+
   if (formularioCuentaAcceso) formularioCuentaAcceso.hidden = Boolean(perfilSesionDemo);
   if (seccionSesionCuenta) seccionSesionCuenta.hidden = !perfilSesionDemo;
   if (textoSaludoCuenta && perfilSesionDemo) {
-    textoSaludoCuenta.textContent = `Hola, ${perfilSesionDemo.nombre || perfilSesionDemo.correo}. Tu sesión de demostración está activa.`;
+    textoSaludoCuenta.textContent = `Hola, ${perfilSesionDemo.nombre || perfilSesionDemo.correo}. Tu sesión está activa.`;
   }
   const foto = perfilSesionDemo?.foto || "";
   if (imagenAvatarCuenta) {
@@ -149,55 +159,66 @@ if (formularioCuentaAcceso) {
     const correo = formularioCuentaAcceso.elements.correo.value.trim().toLowerCase();
     const contrasena = formularioCuentaAcceso.elements.contrasena.value;
     const confirmacion = formularioCuentaAcceso.elements.confirmar;
+    const esRegistro = modoCuentaDemo === "registro";
 
-    confirmacion.setCustomValidity(modoCuentaDemo === "registro" && contrasena !== confirmacion.value
-      ? "Las contraseñas no coinciden."
-      : "");
+    confirmacion.setCustomValidity(esRegistro && contrasena !== confirmacion.value ? "Las contraseñas no coinciden." : "");
     if (!formularioCuentaAcceso.reportValidity()) return;
-
-    let perfilGuardado = null;
-    try {
-      perfilGuardado = JSON.parse(localStorage.getItem(clavePerfilUsuarioDemo) || "null");
-    } catch {
-      perfilGuardado = null;
-    }
+    if (estadoCuentaAcceso) estadoCuentaAcceso.textContent = "Conectando con el servidor...";
 
     try {
-      const fotoArchivo = modoCuentaDemo === "registro" ? formularioCuentaAcceso.elements.foto.files?.[0] : null;
+      const fotoArchivo = esRegistro ? formularioCuentaAcceso.elements.foto.files?.[0] : null;
       const fotoNueva = fotoArchivo ? await convertirFotoPerfil(fotoArchivo) : "";
-      const perfil = modoCuentaDemo === "registro"
-        ? { nombre, correo, foto: fotoNueva }
-        : perfilGuardado?.correo === correo
-          ? perfilGuardado
-          : { nombre: correo.split("@")[0], correo, foto: "" };
-
-      if (modoCuentaDemo === "registro") guardarObjetoDemo(clavePerfilUsuarioDemo, perfil);
+      const respuesta = await fetch(window.apiUrl(esRegistro ? "/api/users/register" : "/api/users/login"), {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(esRegistro ? { name: nombre, email: correo, password: contrasena } : { email: correo, password: contrasena })
+      });
+      const datos = await respuesta.json().catch(() => ({}));
+      if (!respuesta.ok) throw new Error(datos.error || "No se pudo completar el acceso.");
+      const perfil = { nombre: datos.user.nombre, correo: datos.user.correo, foto: fotoNueva };
+      localStorage.setItem("calles-dulces-user-token", datos.token);
+      guardarObjetoDemo(clavePerfilUsuarioDemo, perfil);
+      guardarObjetoDemo(claveSesionUsuarioDemo, perfil);
       perfilSesionDemo = perfil;
-      const guardada = guardarObjetoDemo(claveSesionUsuarioDemo, perfilSesionDemo);
       formularioCuentaAcceso.reset();
       actualizarVistaSesionCuenta();
-      if (estadoCuentaAcceso) {
-        estadoCuentaAcceso.textContent = guardada
-          ? "Sesión de demostración iniciada en este navegador."
-          : "Sesión iniciada en esta página; el navegador no permitió guardarla.";
-      }
+      if (estadoCuentaAcceso) estadoCuentaAcceso.textContent = esRegistro ? "Cuenta creada correctamente." : "Sesión iniciada correctamente.";
     } catch (error) {
-      if (estadoCuentaAcceso) estadoCuentaAcceso.textContent = error.message;
+      if (estadoCuentaAcceso) estadoCuentaAcceso.textContent = error.message || "No se pudo conectar con el servidor.";
     }
   });
 }
 
-document.querySelector("#cerrar-sesion")?.addEventListener("click", () => {
-  perfilSesionDemo = null;
+document.querySelector("#cerrar-sesion")?.addEventListener("click", async () => {
+  const token = localStorage.getItem("calles-dulces-user-token");
   try {
-    localStorage.removeItem(claveSesionUsuarioDemo);
-  } catch {
-    // El control de cierre también actualiza la vista durante esta visita.
-  }
+    if (token) await fetch(window.apiUrl("/api/users/logout"), { method: "POST", headers: { Authorization: `Bearer ${token}` } });
+  } catch { /* El cierre local se mantiene aunque no haya conexión. */ }
+  localStorage.removeItem("calles-dulces-user-token");
+  localStorage.removeItem(claveSesionUsuarioDemo);
+  perfilSesionDemo = null;
   actualizarVistaSesionCuenta();
   cambiarModoAccesoCuenta("ingreso");
-  if (estadoCuentaAcceso) estadoCuentaAcceso.textContent = "Sesión cerrada en este navegador.";
+  if (estadoCuentaAcceso) estadoCuentaAcceso.textContent = "Sesión cerrada correctamente.";
 });
+
+// Recuperar y validar la sesión guardada en este navegador.
+(async () => {
+  const token = localStorage.getItem("calles-dulces-user-token");
+  if (!token) return;
+  try {
+    const respuesta = await fetch(window.apiUrl("/api/users/me"), { headers: { Authorization: `Bearer ${token}` } });
+    const datos = await respuesta.json().catch(() => ({}));
+    if (!respuesta.ok) throw new Error("Sesión expirada");
+    perfilSesionDemo = { nombre: datos.user.nombre, correo: datos.user.correo, foto: perfilSesionDemo?.foto || "" };
+    guardarObjetoDemo(claveSesionUsuarioDemo, perfilSesionDemo);
+    actualizarVistaSesionCuenta();
+  } catch {
+    localStorage.removeItem("calles-dulces-user-token");
+    localStorage.removeItem(claveSesionUsuarioDemo);
+    perfilSesionDemo = null;
+    actualizarVistaSesionCuenta();
+  }
+})();
 
 // ── Mi cuenta: render inicial de la sesión (options.js L1414) ──
 actualizarVistaSesionCuenta();

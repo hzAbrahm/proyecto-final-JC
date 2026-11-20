@@ -8,6 +8,7 @@ const Order = require("./models/order");
 const HelpRequest = require("./models/HelpRequest");
 const Suggestion = require("./models/Suggestion");
 const AdminUser = require("./models/AdminUser");
+const NormalUser = require("./models/normalusers");
 const { hashPassword, verifyPassword, generateSessionToken } = require("./auth");
 const { randomUUID } = require("node:crypto");
 
@@ -379,6 +380,78 @@ app.post("/api/suggestions", async (request, response) => {
     console.error("Error al guardar recomendación:", error);
     return response.status(500).json({ error: "No se pudo guardar la recomendación. Inténtalo de nuevo." });
   }
+});
+
+// ── CUENTAS DE USUARIO NORMAL (colección existente users) ──
+const userSessions = new Map();
+
+function requireUserAuth(request, response, next) {
+  const header = request.headers.authorization || "";
+  const token = header.startsWith("Bearer ") ? header.slice(7).trim() : "";
+  const session = userSessions.get(token);
+  if (!token || !session || Date.now() > session.expiresAt) {
+    if (token) userSessions.delete(token);
+    return response.status(401).json({ error: "Sesión inválida o expirada. Inicia sesión nuevamente." });
+  }
+  request.normalUser = session;
+  next();
+}
+
+function publicUser(user) {
+  return { id: String(user._id), nombre: user.name, correo: user.email };
+}
+
+app.post("/api/users/register", async (request, response) => {
+  const name = typeof request.body?.name === "string" ? request.body.name.trim() : "";
+  const email = typeof request.body?.email === "string" ? request.body.email.trim().toLowerCase() : "";
+  const password = typeof request.body?.password === "string" ? request.body.password : "";
+  if (name.length < 2 || name.length > 100 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || password.length < 8 || password.length > 128) {
+    return response.status(400).json({ error: "Revisa el nombre, correo y contraseña (mínimo 8 caracteres)." });
+  }
+  try {
+    const existing = await NormalUser.findOne({ email }).lean();
+    if (existing) return response.status(409).json({ error: "Ya existe una cuenta con ese correo." });
+    const credentials = hashPassword(password);
+    const user = await NormalUser.create({ name, email, passwordHash: credentials.hash, salt: credentials.salt, active: true });
+    const token = generateSessionToken();
+    userSessions.set(token, { id: String(user._id), email, name, expiresAt: Date.now() + 7 * 24 * 60 * 60 * 1000 });
+    return response.status(201).json({ ok: true, token, user: publicUser(user) });
+  } catch (error) {
+    console.error("Error al registrar usuario:", error);
+    return response.status(500).json({ error: "No se pudo crear la cuenta." });
+  }
+});
+
+app.post("/api/users/login", async (request, response) => {
+  const email = typeof request.body?.email === "string" ? request.body.email.trim().toLowerCase() : "";
+  const password = typeof request.body?.password === "string" ? request.body.password : "";
+  if (!email || !password) return response.status(400).json({ error: "Ingresa correo y contraseña." });
+  try {
+    const user = await NormalUser.findOne({ email, active: { $ne: false } });
+    if (!user || !verifyPassword(password, user.salt, user.passwordHash)) {
+      return response.status(401).json({ error: "Correo o contraseña incorrectos." });
+    }
+    const token = generateSessionToken();
+    userSessions.set(token, { id: String(user._id), email: user.email, name: user.name, expiresAt: Date.now() + 7 * 24 * 60 * 60 * 1000 });
+    return response.json({ ok: true, token, user: publicUser(user) });
+  } catch (error) {
+    console.error("Error en login de usuario:", error);
+    return response.status(500).json({ error: "No se pudo iniciar sesión." });
+  }
+});
+
+app.get("/api/users/me", requireUserAuth, async (request, response) => {
+  try {
+    const user = await NormalUser.findById(request.normalUser.id).lean();
+    if (!user || user.active === false) return response.status(401).json({ error: "La cuenta no está disponible." });
+    return response.json({ ok: true, user: publicUser(user) });
+  } catch { return response.status(500).json({ error: "No se pudo consultar la cuenta." }); }
+});
+
+app.post("/api/users/logout", requireUserAuth, (request, response) => {
+  const token = (request.headers.authorization || "").slice(7).trim();
+  userSessions.delete(token);
+  return response.json({ ok: true });
 });
 
 // ── AUTENTICACIÓN Y GESTIÓN ADMINISTRATIVA ──

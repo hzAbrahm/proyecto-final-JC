@@ -7,7 +7,9 @@
   <title>Calles Dulces | Mi carrito</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Lobster&family=Playwrite+IT+Trad:wght@100..400&family=Xmind:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Lobster&family=Playwrite+IT+Trad:wght@100..400&family=Xmind:ital,wght@0,100..900;1,100..900&display=swap"
+    rel="stylesheet">
   <link rel="stylesheet" href="../css/styles.css">
   <link rel="stylesheet" href="../css/bootstrap-icons.css">
 </head>
@@ -59,7 +61,8 @@
           <div class="carrito-vacio-icono" aria-hidden="true"><i class="bi bi-basket3"></i></div>
           <h2>tu carrito esta vacio</h2>
           <p>Aun no has añadido productos. Explora la tienda y encuentra tu proximo antojo.</p>
-          <a class="boton ir-a-tienda" href="tienda.html">explorar tienda <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
+          <a class="boton ir-a-tienda" href="tienda.html">explorar tienda <i class="bi bi-arrow-right"
+              aria-hidden="true"></i></a>
         </div>
         <p class="estado-carrito-resumen" hidden></p>
       </div>
@@ -67,9 +70,11 @@
         <ul id="productos-carrito" class="productos-carrito"></ul>
         <div class="resumen-carrito">
           <p>subtotal <strong id="subtotal-carrito"></strong></p>
-          <p class="aviso-carrito">El total suma solo los productos, todavía no calcula envío. El pago es una simulación local: no ingreses datos reales y no se realizará ningún cobro.</p>
+          <p class="aviso-carrito">El total suma solo los productos, todavía no calcula envío. El pago es una simulación
+            local: no ingreses datos reales y no se realizará ningún cobro.</p>
           <button id="vaciar-carrito" type="button" class="boton-vaciar-carrito">vaciar carrito</button>
-          <a class="boton ir-a-tienda" href="tienda.html">seguir comprando <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
+          <a class="boton ir-a-tienda" href="tienda.html">seguir comprando <i class="bi bi-arrow-right"
+              aria-hidden="true"></i></a>
         </div>
       </div>
       <section id="checkout-pago" class="checkout-pago" aria-labelledby="titulo-checkout" hidden>
@@ -90,13 +95,18 @@
               <input name="correo" type="email" autocomplete="email" required>
             </label>
             <label>teléfono celular
-              <input name="telefono" type="tel" inputmode="numeric" autocomplete="tel" pattern="[0-9]{10}" maxlength="10" required>
+              <input name="telefono" type="tel" inputmode="numeric" autocomplete="tel" pattern="[0-9]{10}"
+                maxlength="10" required>
             </label>
             <label>ciudad
               <select name="ciudad" required>
                 <option value="">elige tu ciudad</option>
-                <option>Bogotá</option><option>Medellín</option><option>Cali</option>
-                <option>Barranquilla</option><option>Soacha</option><option>Otra</option>
+                <option>Bogotá</option>
+                <option>Medellín</option>
+                <option>Cali</option>
+                <option>Barranquilla</option>
+                <option>Soacha</option>
+                <option>Otra</option>
               </select>
             </label>
             <label class="campo-direccion">dirección de entrega
@@ -105,87 +115,41 @@
           </fieldset>
 
           <fieldset class="metodos-pago">
-            <legend>selecciona un método de pago</legend>
+            <legend>método de pago disponible</legend>
+
             <div class="opciones-metodo-pago">
-              <label class="opcion-metodo-pago"><input type="radio" name="metodo-pago" value="pse" required><span><strong>PSE</strong><small>pago desde tu cuenta bancaria</small></span></label>
-              <label class="opcion-metodo-pago"><input type="radio" name="metodo-pago" value="nequi"><span><strong>Nequi</strong><small>pago desde tu billetera</small></span></label>
-              <label class="opcion-metodo-pago"><input type="radio" name="metodo-pago" value="daviplata"><span><strong>Daviplata</strong><small>pago desde tu billetera</small></span></label>
-              <label class="opcion-metodo-pago"><input type="radio" name="metodo-pago" value="tarjeta"><span><strong>Tarjeta</strong><small>Visa o Mastercard</small></span></label>
-              <label class="opcion-metodo-pago"><input type="radio" name="metodo-pago" value="bre-b"><span><strong>Bre-B</strong><small>llave o referencia QR</small></span></label>
-              <label class="opcion-metodo-pago"><input type="radio" name="metodo-pago" value="contraentrega"><span><strong>Contraentrega</strong><small>efectivo al recibir, si hay cobertura</small></span></label>
+              <label class="opcion-metodo-pago">
+                <input type="radio" name="metodo-pago" value="contraentrega" required>
+                <span>
+                  <strong>Contraentrega</strong>
+                  <small>Efectivo al recibir, si hay cobertura.</small>
+                </span>
+              </label>
             </div>
           </fieldset>
 
-          <div class="datos-metodo-pago" data-metodo-pago="pse" hidden>
-            <label>entidad financiera
-              <select name="banco-pse" required disabled>
-                <option value="">selecciona tu banco</option>
-                <option>Bancolombia</option><option>Banco de Bogotá</option><option>Davivienda</option>
-                <option>BBVA</option><option>Banco de Occidente</option><option>Otro banco</option>
-              </select>
-            </label>
-          </div>
-          <div class="datos-metodo-pago" data-metodo-pago="nequi" hidden>
-            <label>número de celular Nequi
-              <input name="celular-nequi" type="tel" inputmode="numeric" pattern="[0-9]{10}" maxlength="10" required disabled>
-            </label>
-          </div>
-          <div class="datos-metodo-pago" data-metodo-pago="daviplata" hidden>
-            <label>número de celular Daviplata
-              <input name="celular-daviplata" type="tel" inputmode="numeric" pattern="[0-9]{10}" maxlength="10" required disabled>
-            </label>
-          </div>
-          <div class="datos-metodo-pago datos-tarjeta" data-metodo-pago="tarjeta" hidden>
-            <label>franquicia
-              <select name="franquicia" required disabled>
-                <option value="">selecciona</option><option>Visa</option><option>Mastercard</option>
-              </select>
-            </label>
-            <label>nombre en la tarjeta
-              <input name="titular-tarjeta" type="text" autocomplete="cc-name" required disabled>
-            </label>
-            <label>número de tarjeta de prueba
-              <input name="numero-tarjeta" type="text" inputmode="numeric" autocomplete="cc-number" pattern="[0-9 ]{16,23}" maxlength="23" required disabled>
-            </label>
-            <label>vencimiento
-              <input name="vencimiento-tarjeta" type="month" autocomplete="cc-exp" required disabled>
-            </label>
-            <label>código de seguridad de prueba
-              <input name="codigo-tarjeta" type="password" inputmode="numeric" autocomplete="cc-csc" pattern="[0-9]{3,4}" maxlength="4" required disabled>
-            </label>
-            <p class="aviso-metodo-pago">Para probar: 4111 1111 1111 1111, vencimiento futuro y CVV 123. Solo se valida el formato; no ingreses datos reales. El número y el código no se guardan ni se envían.</p>
-          </div>
-          <div class="datos-metodo-pago" data-metodo-pago="bre-b" hidden>
-            <label>tipo de llave o referencia
-              <select name="tipo-llave-breb" required disabled>
-                <option value="">selecciona</option><option>celular</option><option>correo</option><option>identificación</option><option>referencia QR de prueba</option>
-              </select>
-            </label>
-            <label>llave o referencia QR de prueba
-              <input name="llave-breb" type="text" minlength="4" maxlength="80" required disabled>
-            </label>
-          </div>
           <div class="datos-metodo-pago" data-metodo-pago="contraentrega" hidden>
-            <label class="confirmar-cobertura"><input name="cobertura-contraentrega" type="checkbox" required disabled> Confirmo que mi dirección tiene cobertura para pago contraentrega.</label>
-            <p class="aviso-metodo-pago">Este prototipo registra la modalidad elegida; la cobertura real se conectará después.</p>
+            <label class="confirmar-cobertura">
+              <input name="cobertura-contraentrega" type="checkbox" required disabled>
+              Confirmo que mi dirección tiene cobertura para pago contraentrega.
+            </label>
           </div>
 
           <p id="estado-form-checkout" class="estado-form-checkout" aria-live="polite"></p>
-          <button type="submit" class="boton">continuar con el pedido <i class="bi bi-shield-lock-fill" aria-hidden="true"></i></button>
-          <p class="aviso-demo-pago">La transacción se simula para probar el flujo. No se conecta a PSE, Nequi, Daviplata, Bre-B ni a una pasarela.</p>
+
+          <button type="submit" class="boton">
+            registrar pedido
+            <i class="bi bi-bag-check-fill" aria-hidden="true"></i>
+          </button>
         </form>
       </section>
       <section id="estado-transaccion" class="estado-transaccion" aria-live="polite" hidden>
-        <span id="icono-transaccion" class="estado-transaccion-icono" aria-hidden="true"><i class="bi bi-hourglass-split"></i></span>
+        <span id="icono-transaccion" class="estado-transaccion-icono" aria-hidden="true">
+          <i class="bi bi-hourglass-split"></i>
+        </span>
         <div>
-          <h2 id="titulo-transaccion">pago pendiente</h2>
+          <h2 id="titulo-transaccion">pedido registrado</h2>
           <p id="detalle-transaccion"></p>
-        </div>
-        <div id="acciones-transaccion" class="acciones-transaccion" hidden>
-          <span>simulación de respuesta de la pasarela</span>
-          <button type="button" data-resultado-pago="aprobado">simular aprobación</button>
-          <button type="button" data-resultado-pago="rechazado">simular rechazo</button>
-          <button type="button" data-resultado-pago="cancelado">simular cancelación</button>
         </div>
       </section>
     </section>
@@ -201,7 +165,8 @@
         <label for="contacto-nombre">nombre</label>
         <input type="text" id="contacto-nombre" name="nombre" autocomplete="name" required>
         <label for="contacto-numero">numero</label>
-        <input type="tel" id="contacto-numero" name="numero" inputmode="numeric" autocomplete="tel" pattern="[0-9]{10}" minlength="10" maxlength="10" required>
+        <input type="tel" id="contacto-numero" name="numero" inputmode="numeric" autocomplete="tel" pattern="[0-9]{10}"
+          minlength="10" maxlength="10" required>
         <label for="contacto-correo">correo</label>
         <input type="email" id="contacto-correo" name="correo" autocomplete="email" required>
         <label for="contacto-mensaje">mensaje</label>
@@ -212,7 +177,8 @@
     </section>
   </main>
 
-  <button class="boton-contacto-flotante" type="button" aria-label="Abrir formulario de contacto" aria-expanded="false" aria-controls="contactanos">
+  <button class="boton-contacto-flotante" type="button" aria-label="Abrir formulario de contacto" aria-expanded="false"
+    aria-controls="contactanos">
     <i class="bi bi-chat-heart-fill" aria-hidden="true"></i>
     <span>contactanos</span>
   </button>
@@ -224,18 +190,21 @@
           <strong>asistente dulce</strong>
           <span>estoy aquí para ayudarte</span>
         </div>
-        <button id="chatbot-cerrar" type="button" aria-label="Cerrar asistente"><i class="bi bi-x-lg" aria-hidden="true"></i></button>
+        <button id="chatbot-cerrar" type="button" aria-label="Cerrar asistente"><i class="bi bi-x-lg"
+            aria-hidden="true"></i></button>
       </div>
       <div class="chatbot-mensajes" id="chatbot-mensajes" aria-live="polite">
         <p class="chatbot-mensaje chatbot-mensaje-asistente">¡Hola! Pregúntame por productos, pedidos o donaciones.</p>
       </div>
       <form class="chatbot-form" id="chatbot-form">
         <label class="solo-lectores" for="chatbot-pregunta">Escribe tu pregunta</label>
-        <input id="chatbot-pregunta" name="pregunta" type="text" maxlength="240" placeholder="escribe tu pregunta..." autocomplete="off" required>
+        <input id="chatbot-pregunta" name="pregunta" type="text" maxlength="240" placeholder="escribe tu pregunta..."
+          autocomplete="off" required>
         <button type="submit" aria-label="Enviar pregunta"><i class="bi bi-send-fill" aria-hidden="true"></i></button>
       </form>
     </section>
-    <button class="boton-chatbot" id="chatbot-abrir" type="button" aria-label="Abrir asistente virtual" aria-expanded="false" aria-controls="chatbot-panel">
+    <button class="boton-chatbot" id="chatbot-abrir" type="button" aria-label="Abrir asistente virtual"
+      aria-expanded="false" aria-controls="chatbot-panel">
       <i class="bi bi-chat-dots-fill" aria-hidden="true"></i>
       <span>¿te ayudamos?</span>
     </button>
@@ -250,10 +219,17 @@
       <div class="footer-redes">
         <p>siguenos en redes</p>
         <div class="redes-botones">
-          <a class="red-social" href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer" aria-label="Instagram de Calles Dulces" title="Instagram"><i class="bi bi-instagram" aria-hidden="true"></i></a>
-          <a class="red-social" href="https://www.facebook.com/" target="_blank" rel="noopener noreferrer" aria-label="Facebook de Calles Dulces" title="Facebook"><i class="bi bi-facebook" aria-hidden="true"></i></a>
-          <a class="red-social" href="https://www.tiktok.com/" target="_blank" rel="noopener noreferrer" aria-label="TikTok de Calles Dulces" title="TikTok"><i class="bi bi-tiktok" aria-hidden="true"></i></a>
-          <a class="red-social" href="https://wa.me/" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp de Calles Dulces" title="WhatsApp"><i class="bi bi-whatsapp" aria-hidden="true"></i></a>
+          <a class="red-social" href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer"
+            aria-label="Instagram de Calles Dulces" title="Instagram"><i class="bi bi-instagram"
+              aria-hidden="true"></i></a>
+          <a class="red-social" href="https://www.facebook.com/" target="_blank" rel="noopener noreferrer"
+            aria-label="Facebook de Calles Dulces" title="Facebook"><i class="bi bi-facebook"
+              aria-hidden="true"></i></a>
+          <a class="red-social" href="https://www.tiktok.com/" target="_blank" rel="noopener noreferrer"
+            aria-label="TikTok de Calles Dulces" title="TikTok"><i class="bi bi-tiktok" aria-hidden="true"></i></a>
+          <a class="red-social" href="https://wa.me/" target="_blank" rel="noopener noreferrer"
+            aria-label="WhatsApp de Calles Dulces" title="WhatsApp"><i class="bi bi-whatsapp"
+              aria-hidden="true"></i></a>
         </div>
       </div>
     </div>

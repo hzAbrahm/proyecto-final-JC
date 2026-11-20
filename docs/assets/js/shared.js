@@ -112,22 +112,23 @@ const accionesTransaccion = document.querySelector("#acciones-transaccion");
 const formatoCOP = new Intl.NumberFormat("es-CO", { style: "currency", currency: "COP", maximumFractionDigits: 0 });
 let carrito = [];
 let pagoActualDemo = null;
+  try {
+  const productosGuardados = JSON.parse(
+    localStorage.getItem(claveCarrito) || "[]"
+  );
 
-try {
-  const productosGuardados = JSON.parse(localStorage.getItem(claveCarrito) || "[]");
-  if (Array.isArray(productosGuardados)) {
-    carrito = productosGuardados
-      .filter((producto) => producto && producto.id && producto.titulo)
-      .map((producto) => ({
-        id: String(producto.id),
-        titulo: String(producto.titulo),
-        imagen: String(producto.imagen || ""),
-        textoAlternativo: String(producto.textoAlternativo || producto.titulo),
-        precio: String(producto.precio || ""),
-        valor: Math.max(0, Number(producto.valor) || 0),
-        cantidad: Math.max(1, Number.parseInt(producto.cantidad, 10) || 1)
-      }));
-  }
+  carrito = productosGuardados
+  .filter((producto) => producto && producto.id && producto.titulo)
+  .map((producto) => ({
+    id: String(producto.id),
+    productId: String(producto.productId || ""),
+    titulo: String(producto.titulo),
+    imagen: String(producto.imagen || ""),
+    textoAlternativo: String(producto.textoAlternativo || producto.titulo),
+    precio: String(producto.precio || ""),
+    valor: Math.max(0, Number(producto.valor) || 0),
+    cantidad: Math.max(1, Number.parseInt(producto.cantidad, 10) || 1)
+  }));
 } catch {
   carrito = [];
 }
@@ -285,8 +286,8 @@ function renderizarEstadoTransaccionDemo(pago) {
   const [titulo, detalle, icono] = etiquetas[pago.estado] || etiquetas.pendiente;
   if (tituloTransaccion) tituloTransaccion.textContent = titulo;
   if (detalleTransaccion) {
-    detalleTransaccion.textContent = `${nombresMetodosPago[pago.metodo] || pago.metodo} · ${formatoCOP.format(pago.monto)}. ${detalle}`;
-  }
+    detalleTransaccion.textContent =
+  `${nombresMetodosPago[pago.metodo] || pago.metodo} · ${formatoCOP.format(pago.monto)}. ${detalle} ${pago.recibo ? `Recibo: ${pago.recibo}.` : ""}`; }
   if (iconoTransaccion) iconoTransaccion.className = `bi ${icono}`;
   panelEstadoTransaccion.className = `estado-transaccion estado-transaccion-${pago.estado}`;
   if (accionesTransaccion) accionesTransaccion.hidden = pago.estado !== "pendiente";

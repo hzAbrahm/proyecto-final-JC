@@ -10,7 +10,7 @@
     : "https://calles-dulces.onrender.com"; // Reemplazar al crear el servicio en Render.
 
   window.apiUrl = (ruta) => {
-    if (!esLocal && apiBase.includes("TU-SERVICIO")) {
+    if (!esLocal && apiBase.includes("calles-dulces.onrender.com")) {
       throw new Error("Configura la URL real del backend de Render en assets/js/api-config.js.");
     }
     return `${apiBase}${ruta.startsWith("/") ? ruta : `/${ruta}`}`;

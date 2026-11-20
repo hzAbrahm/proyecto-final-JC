@@ -7,7 +7,7 @@
   const esLocal = ["localhost", "127.0.0.1"].includes(window.location.hostname);
   const apiBase = esLocal
     ? "http://127.0.0.1:3003"
-    : "https://TU-SERVICIO.onrender.com"; // Reemplazar al crear el servicio en Render.
+    : "https://calles-dulces.onrender.com"; // Reemplazar al crear el servicio en Render.
 
   window.apiUrl = (ruta) => {
     if (!esLocal && apiBase.includes("TU-SERVICIO")) {
